@@ -1,0 +1,157 @@
+<div class="teamsContainer fadeIn">
+    <header class="pageHeader">
+        <div class="headerInfo">
+            <h1 class="pageTitle">{{ currentUser?.accountType === 'ORGANIZATION' ? 'Organization Directory' : 'Team Directory' }}</h1>
+            <p class="pageSubtitle">{{ currentUser?.accountType === 'ORGANIZATION' ? 'Invite team members and manage organization-wide roles.' : 'Manage users, assign roles, and organize team structures.' }}</p>
+        </div>
+
+        <div class="headerActions">
+            <div class="buttonGroup">
+                <button class="iconButton glass" (click)="toggleSearch()" title="Search Members">
+                    <span class="material-symbols-rounded">search</span>
+                </button>
+            </div>
+            <button class="primaryButton" (click)="openAddMember()">
+                <span class="material-symbols-rounded">person_add</span>
+                {{ currentUser?.accountType === 'ORGANIZATION' ? 'INVITE TEAM MEMBER' : 'INVITE MEMBER' }}
+            </button>
+        </div>
+    </header>
+
+    <!-- Search Side Drawer (Same as Tasks) -->
+    <div class="searchDrawer" [class.open]="isSearchActive">
+        <div class="drawerOverlay" (click)="toggleSearch()"></div>
+        <div class="drawerContent glassPanel">
+            <div class="drawerHeader">
+                <h2 class="drawerTitle">Search Members</h2>
+                <button class="iconButton mini" (click)="toggleSearch()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+
+            <div class="drawerBody">
+                <div class="searchBar">
+                    <span class="material-symbols-rounded searchIcon">search</span>
+                    <input type="text" [(ngModel)]="searchQuery" placeholder="Type to search members..."
+                        class="overlaySearchInput" #searchInput>
+                </div>
+
+                <div class="searchResults">
+                    <!-- If query is empty -->
+                    <div class="searchHint" *ngIf="!searchQuery">
+                        <p>Search by name, email, or role...</p>
+                    </div>
+
+                    <!-- If results found -->
+                    <div class="searchResultList" *ngIf="searchQuery && filteredMembers.length > 0">
+                        <div *ngFor="let member of filteredMembers" class="resultItem" (click)="toggleSearch()">
+                            <img [src]="member.avatar" class="miniAvatar">
+                            <div class="resultInfo">
+                                <span class="resultName">{{ member.name }}</span>
+                                <span class="resultSub">{{ member.email }} • {{ member.role }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- No results -->
+                    <div class="noResults" *ngIf="searchQuery && filteredMembers.length === 0">
+                        <span class="material-symbols-rounded">search_off</span>
+                        <p>No members found for "{{ searchQuery }}"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="membersGrid" *ngIf="filteredMembers.length > 0; else emptySearch">
+        <div *ngFor="let member of filteredMembers" class="memberCard glassPanel fadeIn">
+            <div class="cardBlobs">
+                <div class="blob ripple-1"></div>
+                <div class="blob ripple-2"></div>
+                <div class="blob ripple-3"></div>
+            </div>
+            <div class="cardHeader">
+                <div class="avatarSection">
+                    <img [src]="member.avatar" alt="Avatar" class="avatar">
+                    <div class="statusDot" [class]="member.status.toLowerCase()"></div>
+                </div>
+                <button class="iconButton mini deleteBtn" (click)="deleteMember(member.id)">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+
+            <div class="memberInfo">
+                <h3 class="memberName">{{ member.name }}</h3>
+                <p class="memberEmail">{{ member.email }}</p>
+            </div>
+
+            <div class="memberBadges">
+                <span class="roleBadge" [class]="getRoleClass(member.role)">{{ member.role }}</span>
+                <span class="teamBadge">{{ member.team }}</span>
+            </div>
+
+            <div class="memberActions">
+                <button class="secondaryButton small">
+                    <span class="material-symbols-rounded">edit</span>
+                    Edit
+                </button>
+                <button class="secondaryButton small">
+                    <span class="material-symbols-rounded">key</span>
+                    Perms
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div class="modalOverlay" *ngIf="showAddMemberModal">
+        <div class="glassModal">
+            <div class="modalHeader">
+                <h3 class="modalTitle">Invite New Member</h3>
+                <button class="iconButton mini" (click)="showAddMemberModal = false">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="modalBody">
+                <div class="inputGroup">
+                    <label>Full Name</label>
+                    <input type="text" [(ngModel)]="newMember.name" placeholder="Enter name">
+                </div>
+                <div class="inputGroup">
+                    <label>Email Address</label>
+                    <input type="email" [(ngModel)]="newMember.email" placeholder="email@example.com">
+                </div>
+                <div class="inputGroup">
+                    <label>Project Role</label>
+                    <select [(ngModel)]="newMember.role">
+                        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+                    </select>
+                </div>
+                <div class="inputGroup">
+                    <label>Assigned Team</label>
+                    <select [(ngModel)]="newMember.team">
+                        <option *ngFor="let team of teams" [value]="team">{{ team }}</option>
+                    </select>
+                </div>
+                <div class="inputGroup" *ngIf="currentUser?.accountType === 'ORGANIZATION'">
+                    <label>Bulk Invite (Comma separated emails)</label>
+                    <textarea [(ngModel)]="newMember.bulkEmails" placeholder="email1@example.com, email2@example.com" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modalFooter">
+                <button class="modalBtn cancel" (click)="showAddMemberModal = false">Cancel</button>
+                <button class="modalBtn confirm" (click)="addMember()">Send Invitation</button>
+            </div>
+        </div>
+    </div>
+    <ng-template #emptySearch>
+        <div class="emptySearchState glassPanel fadeIn">
+            <span class="material-symbols-rounded">person_search</span>
+            <h3>No members found</h3>
+            <p>We couldn't find any team members matching "{{ searchQuery }}"</p>
+            <button class="secondaryButton" (click)="searchQuery = ''; isSearchActive = false">
+                Clear Search
+            </button>
+        </div>
+    </ng-template>
+</div>

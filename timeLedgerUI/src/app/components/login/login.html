@@ -1,0 +1,52 @@
+<div class="authContainer">
+
+    <div class="authContent glassPanel">
+        <h1 class="authTitle">Welcome Back</h1>
+        <p class="authSubtitle">Log in to your account to continue</p>
+        
+        <div class="accountTypeToggle">
+            <button type="button" [class.active]="credentials.accountType === 'INDIVIDUAL'" (click)="credentials.accountType = 'INDIVIDUAL'">
+                <span class="material-symbols-rounded">person</span>
+                Individual
+            </button>
+            <button type="button" [class.active]="credentials.accountType === 'ORGANIZATION'" (click)="credentials.accountType = 'ORGANIZATION'">
+                <span class="material-symbols-rounded">corporate_fare</span>
+                Organization
+            </button>
+        </div>
+
+        <form class="authForm" (submit)="onSubmit()">
+            <div class="formField">
+                <label for="username">Username</label>
+                <div class="inputWrapper">
+                    <span class="material-symbols-rounded">person</span>
+                    <input type="text" id="username" name="username" [(ngModel)]="credentials.username" placeholder="Your username" required aria-label="Username">
+                </div>
+            </div>
+            
+            <div class="formField">
+                <div class="labelRow">
+                    <label for="password">Password</label>
+                    <a routerLink="/forgot-password" class="forgotLink">Forgot?</a>
+                </div>
+                <div class="inputWrapper">
+                    <span class="material-symbols-rounded">lock</span>
+                    <input type="password" id="password" name="password" [(ngModel)]="credentials.password" placeholder="••••••••" required aria-label="Password">
+                </div>
+            </div>
+
+            <div *ngIf="error" class="error-message">
+                {{error}}
+            </div>
+
+            <button type="submit" class="submitBtn">
+                <span>Sign In</span>
+                <span class="material-symbols-rounded">arrow_forward</span>
+            </button>
+        </form>
+
+        <div class="authFooter">
+            <p>Don't have an account? <a routerLink="/register">Create one</a></p>
+        </div>
+    </div>
+</div>

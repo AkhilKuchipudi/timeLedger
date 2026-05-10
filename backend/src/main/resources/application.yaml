@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: backend
+  datasource:
+    # PostgreSQL Configuration (Users, Roles, Projects, Timesheets)
+    url: jdbc:postgresql://localhost:5432/timeledger
+    username: postgres
+    password: password
+    driverClassName: org.postgresql.Driver
+  
+  # MongoDB Configuration (Tasks)
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/timeledger
+  
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8080
+
+timeledger:
+  app:
+    jwtSecret: timeLedgerSecretKey2026SecureStringForHS512AlgorithmMustBeAtLeast64Chars
+    jwtExpirationMs: 86400000

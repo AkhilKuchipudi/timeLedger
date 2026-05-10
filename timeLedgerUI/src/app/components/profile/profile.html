@@ -1,0 +1,224 @@
+<div class="profileContainer">
+  <header class="pageHeader">
+    <div class="headerInfo">
+      <h1 class="pageTitle">User Profile</h1>
+      <p class="pageSubtitle">Manage your personal information, security, and preferences.</p>
+    </div>
+  </header>
+  <!-- Bento Grid Layout -->
+  <div class="bentoGrid">
+    <!-- Profile Identity Card -->
+    <div class="leftColumn">
+      <div class="glassPanel identityCard">
+        <!-- Abstract Gradient Accent -->
+        <div class="gradientAccent"></div>
+        <div class="cardBlobs">
+          <div class="blob blob1"></div>
+          <div class="blob blob2 secondaryBlob"></div>
+        </div>
+        <div class="cardContent">
+          <div class="avatarContainer">
+            <div class="avatarWrapper">
+              <img alt="User Avatar" class="avatarImage"
+                [src]="currentUser?.avatar || 'https://ui-avatars.com/api/?name=' + currentUser?.username + '&background=random'" />
+            </div>
+          </div>
+          <h2 class="userName">{{ currentUser?.fullName || currentUser?.username }}</h2>
+          <div class="accountBadge" [class.org]="currentUser?.accountType === 'ORGANIZATION'">
+            <span class="material-symbols-rounded">{{ currentUser?.accountType === 'ORGANIZATION' ? 'corporate_fare' : 'person' }}</span>
+            {{ currentUser?.accountType || 'INDIVIDUAL' }}
+          </div>
+          <p class="userRole">{{ currentUser?.role || 'TEAM MEMBER' }}</p>
+
+          <div class="statsContainer">
+            <div class="statItem bordered">
+              <span class="statValue">84</span>
+              <span class="statLabel">Projects</span>
+            </div>
+            <div class="statItem bordered">
+              <span class="statValue">12k</span>
+              <span class="statLabel">Hours</span>
+            </div>
+            <div class="statItem">
+              <span class="statValue">4.9</span>
+              <span class="statLabel">Rating</span>
+            </div>
+          </div>
+
+          <button class="primaryButton">
+            <span class="material-symbols-rounded">edit</span>
+            Edit Master Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- Achievement Medals Card -->
+      <div class="glassPanel achievementsCard">
+        <div class="cardHeader">
+          <h3 class="headerTitle">Achievements</h3>
+          <span class="badgeCount">4 Unlocked</span>
+        </div>
+        <div class="medalsGrid">
+          <div class="medalBox gold" title="Master Strategist">
+            <div class="medalCircle">
+              <span class="material-symbols-rounded">emoji_events</span>
+              <div class="medalGlow"></div>
+            </div>
+            <span class="medalName">Master</span>
+          </div>
+          <div class="medalBox silver" title="Efficient Executor">
+            <div class="medalCircle">
+              <span class="material-symbols-rounded">military_tech</span>
+              <div class="medalGlow"></div>
+            </div>
+            <span class="medalName">Efficient</span>
+          </div>
+          <div class="medalBox bronze" title="Top Contributor">
+            <div class="medalCircle">
+              <span class="material-symbols-rounded">workspace_premium</span>
+              <div class="medalGlow"></div>
+            </div>
+            <span class="medalName">Top 10%</span>
+          </div>
+          <div class="medalBox special" title="Innovator of the Month">
+            <div class="medalCircle">
+              <span class="material-symbols-rounded">auto_awesome</span>
+              <div class="medalGlow"></div>
+            </div>
+            <span class="medalName">Innovator</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Summary Card -->
+      <div class="glassPanel activityCard">
+        <h3 class="cardTitle">
+          MONTHLY VELOCITY
+          <span class="titleBadge">JULY 2024</span>
+        </h3>
+        <div class="progressSection">
+          <div class="progressHeader">
+            <p class="progressLabel">Tasks Completed</p>
+            <p class="progressValue">142/160</p>
+          </div>
+          <div class="progressBarContainer">
+            <div class="progressBar" style="width: 88.7%"></div>
+          </div>
+        </div>
+        <div class="progressSection">
+          <div class="progressHeader">
+            <p class="progressLabel">Billable Efficiency</p>
+            <p class="progressValue">94%</p>
+          </div>
+          <div class="progressBarContainer secondary">
+            <div class="progressBar" style="width: 94%"></div>
+          </div>
+        </div>
+        <div class="miniStatsGrid">
+          <div class="miniStatBox">
+            <p class="miniStatLabel">Total Hours</p>
+            <p class="miniStatValue">184.5</p>
+          </div>
+          <div class="miniStatBox">
+            <p class="miniStatLabel">Utilization</p>
+            <p class="miniStatValue highlighted">Superior</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Details & Settings Section -->
+    <div class="rightColumn">
+      <div class="glassPanel formCard">
+        <div class="cardHeader">
+          <h3 class="headerTitle">Account Details</h3>
+          <div class="headerActions">
+            <button class="secondaryButton">Discard</button>
+            <button class="primaryButton">Save Changes</button>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div class="formGrid">
+            <div class="formGroup">
+              <label class="formLabel">FULL NAME</label>
+              <div class="inputWrapper">
+                <input class="formInput" type="text" value="Marcus Aurelius Sterling" />
+                <span class="material-symbols-rounded inputIcon">lock</span>
+              </div>
+            </div>
+            <div class="formGroup">
+              <label class="formLabel">EMAIL ADDRESS</label>
+              <input class="formInput" type="email" value="m.sterling@luminous-exec.com" />
+            </div>
+            <div class="formGroup">
+              <label class="formLabel">PHONE NUMBER</label>
+              <input class="formInput" type="tel" value="+1 (555) 000-1234" />
+            </div>
+            <div class="formGroup">
+              <label class="formLabel">EMPLOYEE ID</label>
+              <input class="formInput" type="text" value="LX-8802" readonly />
+            </div>
+            <div class="formGroup">
+              <label class="formLabel">DEPARTMENT</label>
+              <input class="formInput" type="text" value="Strategic Operations" />
+            </div>
+            <div class="formGroup">
+              <label class="formLabel">DATE OF JOINING</label>
+              <input class="formInput" type="date" value="2022-01-15" />
+            </div>
+            <div class="formGroup">
+              <label class="formLabel">PROFESSIONAL ROLE</label>
+              <input class="formInput" type="text" value="Senior Strategic Director" />
+            </div>
+            <div class="formGroup">
+              <label class="formLabel">TIMEZONE (HQ)</label>
+              <div class="selectWrapper">
+                <select class="formSelect">
+                  <option>GMT -5:00 Eastern Time</option>
+                  <option>GMT +0:00 London</option>
+                  <option>GMT +9:00 Tokyo</option>
+                </select>
+              </div>
+            </div>
+            <div class="formGroup fullWidth">
+              <label class="formLabel">EXECUTIVE BIO</label>
+              <textarea class="formTextarea"
+                rows="4">Focusing on high-level organizational infrastructure and long-term strategic growth. Specialist in navigating complex project lifecycles for Fortune 500 partners. Committed to radical transparency and data-driven decision making.</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Settings Grid -->
+      <div class="settingsGrid">
+        <!-- Security & Privacy Card -->
+        <div class="glassPanel formCard">
+          <div class="cardBody">
+            <div class="cardTitleRow">
+              <div class="iconBox security">
+                <span class="material-symbols-rounded">security</span>
+              </div>
+              <h3 class="settingsTitle">Security & Privacy</h3>
+            </div>
+            <ul class="settingsList">
+              <li class="settingsItem">
+                <span class="itemLabel">Two-Factor Authentication</span>
+                <span class="statusBadge">Enabled</span>
+              </li>
+              <li class="settingsItem">
+                <span class="itemLabel">Biometric Sign-in</span>
+                <button class="linkButton">Configure</button>
+              </li>
+              <li class="settingsItem">
+                <span class="itemLabel">Session Management</span>
+                <button class="linkButton">View Active</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>

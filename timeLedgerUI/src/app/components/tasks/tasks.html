@@ -1,0 +1,363 @@
+<div class="tasksContainer">
+    <header class="tasksHeader pageHeader">
+        <div class="headerInfo">
+            <h1 class="pageTitle">Task Manager</h1>
+            <p class="pageSubtitle">Manage projects, track progress, and collaborate with your team.</p>
+            
+            <!-- Removed local timerBar as it is now in the Global Header -->
+        </div>
+        <div class="headerActions">
+            <button class="secondaryButton addStageBtn" *ngIf="currentUser?.role === 'ROLE_ADMIN' || currentUser?.role === 'ROLE_PM'" (click)="addStage()">
+                <span class="material-symbols-rounded">view_column</span>
+                <span>ADD STAGE</span>
+            </button>
+            <button class="primaryButton addTaskBtn" *ngIf="currentUser && currentUser.role !== 'ROLE_CLIENT'" (click)="openTaskModal()">
+                <span class="material-symbols-rounded">add</span>
+                <span>NEW TASK</span>
+            </button>
+            <div class="buttonGroup">
+                <button class="iconButton glass archiveBtn" (click)="toggleArchivedDrawer()" [class.active]="archivedTasks.length > 0">
+                    <span class="material-symbols-rounded">archive</span>
+                    <span class="badge" *ngIf="archivedTasks.length > 0">{{ archivedTasks.length }}</span>
+                </button>
+                <button class="iconButton glass searchBtn" (click)="toggleSearchDrawer()">
+                    <span class="material-symbols-rounded">search</span>
+                </button>
+                <button class="iconButton glass activityBtn" (click)="toggleActivityDrawer()">
+                    <span class="material-symbols-rounded">history</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="kanbanBoard" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="dropColumn($event)"
+        cdkDropListGroup cdkScrollable>
+        <div class="kanbanColumn" *ngFor="let column of kanbanColumns" cdkDrag [cdkDragData]="column">
+            <div class="columnHeader" cdkDragHandle>
+                <div class="columnTitleGroup">
+                    <h3 class="columnTitle">{{ column.title }}</h3>
+                    <span class="taskCount">{{ column.tasks.length }}</span>
+                </div>
+                <button class="iconButton mini"
+                    (click)="$event.stopPropagation(); onContextMenu($event, column, 'column')">
+                    <span class="material-symbols-rounded">more_horiz</span>
+                </button>
+            </div>
+
+            <div class="columnContent" cdkDropList [cdkDropListData]="column.tasks" (cdkDropListDropped)="drop($event)">
+                <button class="addCardPlaceholder" *ngIf="currentUser && currentUser.role !== 'ROLE_CLIENT'" (click)="openTaskModal(column.id)">
+                    <span class="material-symbols-rounded">add</span>
+                    <span>Add Task</span>
+                </button>
+                <div class="glassPanel taskCard" *ngFor="let task of column.tasks" [id]="'task-' + task.id"
+                    [class]="getPriorityClass(task.priority)" (contextmenu)="onContextMenu($event, task, 'task')"
+                    cdkDrag>
+
+                    <div class="cardBlobs">
+                        <div class="blob ripple-1"></div>
+                        <div class="blob ripple-2"></div>
+                        <div class="blob ripple-3"></div>
+                    </div>
+
+                    <div class="cdk-drag-placeholder" *cdkDragPlaceholder></div>
+
+                    <div class="taskHeader">
+                        <div class="projectGroup">
+                            <span class="projectBadge">{{ task.project }}</span>
+                        </div>
+                        <button class="iconButton mini taskMenuBtn"
+                            (click)="$event.stopPropagation(); onContextMenu($event, task, 'task')">
+                            <span class="material-symbols-rounded">more_horiz</span>
+                        </button>
+                    </div>
+                    <h4 class="taskTitle">{{ task.title }}</h4>
+                    <p class="taskDesc">{{ task.description }}</p>
+
+                    <div class="taskFooter">
+                        <div class="assignee">
+                            <img [src]="task.assignee.avatar" [alt]="task.assignee.name" class="avatar">
+                            <span class="assigneeName">{{ task.assignee.name }}</span>
+                        </div>
+                        <div class="dueDate">
+                            <span class="material-symbols-rounded">calendar_today</span>
+                            <span>{{ task.dueDate }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Floating Context Menu (now inside board for horizontal scrolling) -->
+        <div class="floatingMenu glassPanel" *ngIf="menuVisible" [style.left.px]="menuPosition.x"
+            [style.top.px]="menuPosition.y" (click)="$event.stopPropagation()" (contextmenu)="$event.preventDefault()">
+
+            <ng-container *ngIf="menuType === 'task' && selectedTask">
+                <div class="menuItem" (click)="toggleTimer(selectedTask)" [class.active]="isTimerRunning && activeTimerTask?.id === selectedTask.id">
+                    <span class="material-symbols-rounded">{{ isTimerRunning && activeTimerTask?.id === selectedTask.id ? 'stop_circle' : 'play_circle' }}</span>
+                    <span>{{ isTimerRunning && activeTimerTask?.id === selectedTask.id ? 'Stop Tracking' : 'Start Tracking' }}</span>
+                </div>
+                <div class="menuItem" (click)="openTaskModal(selectedColumn?.id, selectedTask)">
+                    <span class="material-symbols-rounded">edit</span>
+                    <span>Edit Task</span>
+                </div>
+                <div class="menuItem" (click)="copyTaskLink(selectedTask)">
+                    <span class="material-symbols-rounded">content_copy</span>
+                    <span>Copy link</span>
+                </div>
+                <div class="menuDivider"></div>
+                <div class="menuItem hasSubmenu">
+                    <span class="material-symbols-rounded">swap_horiz</span>
+                    <span>Move to column</span>
+                    <span class="material-symbols-rounded submenuIcon">chevron_right</span>
+
+                    <!-- Simple Submenu for Moving -->
+                    <div class="floatingMenu submenu glassPanel" [class.side-left]="submenuSide === 'left'">
+                        <div *ngFor="let col of kanbanColumns" class="menuItem"
+                            (click)="moveTaskToColumn(selectedTask, col.id)">
+                            <span>{{ col.title }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="menuDivider"></div>
+                <div class="menuItem" *ngIf="currentUser?.role !== 'ROLE_CLIENT'" (click)="archiveTask(selectedTask)">
+                    <span class="material-symbols-rounded">archive</span>
+                    <span>Archive</span>
+                    <span class="shortcut">E</span>
+                </div>
+                <div class="menuItem danger" *ngIf="currentUser?.role === 'ROLE_ADMIN' || currentUser?.role === 'ROLE_PM'" (click)="deleteTask(selectedTask)">
+                    <span class="material-symbols-rounded">delete</span>
+                    <span>Remove from project</span>
+                    <span class="shortcut">Del</span>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="menuType === 'column' && selectedColumn">
+                <div class="menuSection">Column: {{ selectedColumn.title }}</div>
+                <div class="menuItem" (click)="editColumn(selectedColumn)">
+                    <span class="material-symbols-rounded">edit</span>
+                    <span>Edit details</span>
+                </div>
+                <div class="menuItem">
+                    <span class="material-symbols-rounded">format_list_numbered</span>
+                    <span>Set limit</span>
+                </div>
+                <div class="menuItem">
+                    <span class="material-symbols-rounded">visibility_off</span>
+                    <span>Hide from view</span>
+                </div>
+                <div class="menuItem danger" *ngIf="currentUser?.role === 'ROLE_ADMIN' || currentUser?.role === 'ROLE_PM'" (click)="deleteColumn(selectedColumn)">
+                    <span class="material-symbols-rounded">delete</span>
+                    <span>Delete</span>
+                </div>
+                <div class="menuDivider"></div>
+                <div class="menuSection">Items</div>
+                <div class="menuItem" (click)="archiveAllInColumn(selectedColumn)">
+                    <span class="material-symbols-rounded">archive</span>
+                    <span>Archive all</span>
+                </div>
+                <div class="menuItem danger" (click)="archiveAllInColumn(selectedColumn)">
+                    <span class="material-symbols-rounded">delete</span>
+                    <span>Remove all</span>
+                </div>
+            </ng-container>
+
+            <!-- Project Menu -->
+            <ng-container *ngIf="menuType === 'project'">
+                <div class="menuSection">Project Options</div>
+                <div class="menuItem">
+                    <span class="material-symbols-rounded">settings</span>
+                    <span>Project Settings</span>
+                </div>
+                <div class="menuItem">
+                    <span class="material-symbols-rounded">group</span>
+                    <span>Manage Team</span>
+                </div>
+                <div class="menuDivider"></div>
+                <div class="menuItem" (click)="archiveProject()">
+                    <span class="material-symbols-rounded">archive</span>
+                    <span>Archive Project</span>
+                </div>
+                <div class="menuItem danger" (click)="deleteProject()">
+                    <span class="material-symbols-rounded">delete</span>
+                    <span>Delete Project</span>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Search Side Drawer -->
+    <div class="searchDrawer" [class.open]="showSearchDrawer">
+        <div class="drawerOverlay" (click)="toggleSearchDrawer()"></div>
+        <div class="drawerContent glassPanel">
+            <div class="drawerHeader">
+                <h2 class="drawerTitle">Search Tasks</h2>
+                <button class="iconButton mini" (click)="toggleSearchDrawer()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="drawerBody">
+                <div class="searchField">
+                    <span class="material-symbols-rounded">search</span>
+                    <input type="text" [(ngModel)]="searchQuery" placeholder="Type to search..." class="drawerSearchInput">
+                </div>
+
+                <div class="searchResults" *ngIf="searchQuery">
+                    <div class="emptyState" *ngIf="searchResults.length === 0">
+                        <span class="material-symbols-rounded">search_off</span>
+                        <p>No results for "{{ searchQuery }}"</p>
+                    </div>
+
+                    <div class="archivedList" *ngIf="searchResults.length > 0">
+                        <div class="archivedItem glassPanel" *ngFor="let task of searchResults" (click)="scrollToTask(task)" style="cursor: pointer;">
+                            <div class="archivedItemContent">
+                                <h4 class="taskTitle">{{ task.title }}</h4>
+                                <p class="taskDesc">{{ task.project }} • {{ task.dueDate }}</p>
+                            </div>
+                            <span class="material-symbols-rounded" style="opacity: 0.5;">arrow_forward</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modalOverlay" *ngIf="showTaskModal" (click)="closeTaskModal()">
+        <div class="modalContainer glassPanel" (click)="$event.stopPropagation()">
+            <div class="modalHeader">
+                <h2 class="modalTitle">{{ isEditing ? 'Edit Task' : 'New Task' }}</h2>
+                <button class="iconButton mini" (click)="closeTaskModal()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="modalBody">
+                <div class="inputGroup">
+                    <label>Title</label>
+                    <input type="text" [(ngModel)]="modalTask.title" placeholder="What needs to be done?">
+                </div>
+                <div class="inputGroup">
+                    <label>Description</label>
+                    <textarea [(ngModel)]="modalTask.description" rows="3" placeholder="Add more details..."></textarea>
+                </div>
+                <div class="inputRow">
+                    <div class="inputGroup">
+                        <label>Priority</label>
+                        <select [(ngModel)]="modalTask.priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <div class="inputGroup">
+                        <label>Stage</label>
+                        <select [(ngModel)]="modalTask.columnId">
+                            <option *ngFor="let col of kanbanColumns" [value]="col.id">{{ col.title }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="inputRow">
+                    <div class="inputGroup">
+                        <label>Project</label>
+                        <input type="text" [(ngModel)]="modalTask.project" placeholder="Project name">
+                    </div>
+                    <div class="inputGroup">
+                        <label>Due Date</label>
+                        <input type="text" [(ngModel)]="modalTask.dueDate" placeholder="e.g. Mar 15">
+                    </div>
+                </div>
+            </div>
+            <div class="modalFooter">
+                <button class="secondaryButton" (click)="closeTaskModal()">Cancel</button>
+                <button class="primaryButton" (click)="saveTask()">{{ isEditing ? 'Update Task' : 'Create Task'
+                    }}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stage Modal -->
+    <div class="modalOverlay" *ngIf="showStageModal" (click)="closeStageModal()">
+        <div class="modalContainer glassPanel small" (click)="$event.stopPropagation()">
+            <div class="modalHeader">
+                <h2 class="modalTitle">{{ editingColumn ? 'Edit Stage' : 'New Stage' }}</h2>
+                <button class="iconButton mini" (click)="closeStageModal()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="modalBody">
+                <div class="inputGroup">
+                    <label>Stage Name</label>
+                    <input type="text" [(ngModel)]="modalStageTitle" placeholder="e.g. In Review, Testing...">
+                </div>
+            </div>
+            <div class="modalFooter">
+                <button class="secondaryButton" (click)="closeStageModal()">Cancel</button>
+                <button class="primaryButton" (click)="saveStage()">{{ editingColumn ? 'Update Stage' : 'Create Stage'
+                    }}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Archived Side Drawer -->
+    <div class="searchDrawer" [class.open]="showArchivedDrawer">
+        <div class="drawerOverlay" (click)="toggleArchivedDrawer()"></div>
+        <div class="drawerContent glassPanel">
+            <div class="drawerHeader">
+                <h2 class="drawerTitle">Archived Tasks</h2>
+                <button class="iconButton mini" (click)="toggleArchivedDrawer()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="drawerBody">
+                <div class="emptyState" *ngIf="archivedTasks.length === 0">
+                    <span class="material-symbols-rounded">archive</span>
+                    <p>No archived tasks yet</p>
+                </div>
+                
+                <div class="archivedList">
+                    <div class="archivedItem glassPanel" *ngFor="let task of archivedTasks">
+                        <div class="archivedItemContent">
+                            <h4 class="taskTitle">{{ task.title }}</h4>
+                            <p class="taskDesc">{{ task.project }}</p>
+                        </div>
+                        <button class="iconButton mini restoreBtn" (click)="unarchiveTask(task)" title="Restore to board">
+                            <span class="material-symbols-rounded">unarchive</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Activity Side Drawer -->
+    <div class="searchDrawer" [class.open]="showActivityDrawer">
+        <div class="drawerOverlay" (click)="toggleActivityDrawer()"></div>
+        <div class="drawerContent glassPanel">
+            <div class="drawerHeader">
+                <h2 class="drawerTitle">Project Activity</h2>
+                <button class="iconButton mini" (click)="toggleActivityDrawer()">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="drawerBody">
+                <div class="emptyState" *ngIf="activities.length === 0">
+                    <span class="material-symbols-rounded">history</span>
+                    <p>No activity recorded yet</p>
+                </div>
+                
+                <div class="activityList">
+                    <div class="activityItem" *ngFor="let activity of activities">
+                        <div class="activityIcon">
+                            <span class="material-symbols-rounded">{{ activity.icon }}</span>
+                        </div>
+                        <div class="activityContent">
+                            <p class="activityMessage">{{ activity.message }}</p>
+                            <span class="activityTime">{{ activity.timestamp | date:'shortTime' }} • {{ activity.timestamp | date:'MMM d' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

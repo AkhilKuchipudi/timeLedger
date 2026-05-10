@@ -1,0 +1,126 @@
+<div class="settingsContainer fadeIn">
+    <header class="pageHeader">
+        <div class="headerInfo">
+            <h1 class="pageTitle">System Settings</h1>
+            <p class="pageSubtitle">Configure global workspace preferences and integrations.</p>
+        </div>
+
+        <div class="headerActions">
+            <div class="buttonGroup">
+                <button class="iconButton glass" title="Refresh Settings">
+                    <span class="material-symbols-rounded">refresh</span>
+                </button>
+            </div>
+            <button class="primaryButton" (click)="saveSettings()">
+                <span class="material-symbols-rounded">save</span>
+                SAVE CHANGES
+            </button>
+        </div>
+    </header>
+
+    <div class="settingsGrid">
+        <!-- General Section -->
+        <section class="settingsSection glassPanel">
+            <div class="sectionHeader">
+                <span class="material-symbols-rounded icon">settings_applications</span>
+                <div class="sectionTitle">
+                    <h3>General Workspace</h3>
+                    <p>Update your project identity and access levels.</p>
+                </div>
+            </div>
+
+            <div class="sectionBody">
+                <div class="inputRow">
+                    <div class="inputGroup">
+                        <label>Project Name</label>
+                        <input type="text" [(ngModel)]="projectConfig.name">
+                    </div>
+                    <div class="inputGroup">
+                        <label>Workspace URL</label>
+                        <div class="urlInput">
+                            <span>https://</span>
+                            <input type="text" [(ngModel)]="projectConfig.workspaceUrl">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toggleGroup">
+                    <div class="toggleInfo">
+                        <p class="toggleLabel">Private Workspace</p>
+                        <p class="toggleDesc">Only invited team members can access this project.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Automation Section -->
+        <section class="settingsSection glassPanel">
+            <div class="sectionHeader">
+                <span class="material-symbols-rounded icon">auto_fix_high</span>
+                <div class="sectionTitle">
+                    <h3>Automation & Cleanup</h3>
+                    <p>Define rules for task archiving and data retention.</p>
+                </div>
+            </div>
+
+            <div class="sectionBody">
+                <div class="toggleGroup">
+                    <div class="toggleInfo">
+                        <p class="toggleLabel">Auto-Archive Completed Tasks</p>
+                        <p class="toggleDesc">Move 'Done' tasks to archive after a certain period.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" [(ngModel)]="projectConfig.autoArchiveTasks">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="inputGroup" *ngIf="projectConfig.autoArchiveTasks">
+                    <label>Archive Threshold (Days)</label>
+                    <input type="number" [(ngModel)]="projectConfig.archiveThreshold" style="width: 120px;">
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications Section -->
+        <section class="settingsSection glassPanel">
+            <div class="sectionHeader">
+                <span class="material-symbols-rounded icon">notifications_active</span>
+                <div class="sectionTitle">
+                    <h3>Alerts & Integrations</h3>
+                    <p>Choose how your team stays updated.</p>
+                </div>
+            </div>
+
+            <div class="sectionBody">
+                <div class="toggleList">
+                    <div class="toggleItem">
+                        <span>Email Alerts</span>
+                        <label class="switch small">
+                            <input type="checkbox" [(ngModel)]="notificationSettings.emailAlerts">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggleItem">
+                        <span>Slack / Teams Integration</span>
+                        <label class="switch small">
+                            <input type="checkbox" [(ngModel)]="notificationSettings.slackIntegration">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggleItem">
+                        <span>Timer Reminders</span>
+                        <label class="switch small">
+                            <input type="checkbox" [(ngModel)]="notificationSettings.timerReminders">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
