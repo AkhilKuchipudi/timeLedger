@@ -1,0 +1,115 @@
+:root {
+    --primary: #5d5ce6;
+    --primary-rgb: 93, 92, 230;
+    --primary-glow: rgba(93, 92, 230, 0.4);
+    --onPrimary: #ffffff;
+
+    --secondary: #008080;
+    --tertiary: #ff2d55;
+    --tertiary-rgb: 255, 45, 85;
+
+    --background: #fcfcfd;
+    --onBackground: #0a0a0b;
+
+    --secondary-btn: #f1f5f9;
+    --border-color: #cbd5e1;
+
+    --primaryContainer: color-mix(in srgb, var(--primary), white 85%);
+    --primaryContainer: color-mix(in srgb, var(--primary), white 85%);
+
+    --surface: rgba(255, 255, 255, 0.7);
+    --onSurface: #0a0a0b;
+    --onSurfaceVariant: #636366;
+
+    --outline: rgba(0, 0, 0, 0.08);
+    --mini-profile-bg: rgba(255, 255, 255, 0.5);
+
+    --glass-background: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(184, 184, 184, 0.8);
+    --glass-blur: 24px;
+    --glass-radius: 1.5rem;
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
+    --shadow-md: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 32px 64px -16px rgba(0, 0, 0, 0.12);
+
+    --surface-lowest: #ffffff;
+    --surface-low: #f8fafc;
+
+    --surfaceContainerLowest: #ffffff;
+    --surfaceContainerLow: #f7f9fc;
+    --surfaceContainerHighest: #dae2ed;
+
+    --mesh-1: #e2e8f0;
+    --mesh-2: #f8fafc;
+
+    --contrast-bg: #ffffff;
+    --contrast-text: #000000;
+    --contrast-text-dim: #666666;
+    --contrast-border: rgba(0, 0, 0, 0.08);
+    --contrast-hover: #f5f5f5;
+    --contrast-item-bg: #f8fafc;
+}
+
+@mixin dark-variables {
+    --primary: #7d7aff;
+    --primary-rgb: 125, 122, 255;
+    --primary-glow: rgba(125, 122, 255, 0.5);
+    --onPrimary: #ffffff;
+
+    --secondary: #40e0d0;
+    --tertiary: #ff375f;
+    --tertiary-rgb: 255, 55, 95;
+
+    --background: #050505;
+    --onBackground: #f1f1f2;
+
+    --secondary-btn: #4838424e;
+    --border-color: #30363d;
+
+    --primaryContainer: color-mix(in srgb, var(--primary), black 60%);
+    --primaryContainer: color-mix(in srgb, var(--primary), black 60%);
+
+    --surface: rgba(18, 18, 20, 0.7);
+    --onSurface: #f1f1f2;
+    --onSurfaceVariant: #9898a0;
+
+    --outline: rgba(255, 255, 255, 0.08);
+    --mini-profile-bg: rgba(30, 41, 59, 0.4);
+
+    --glass-background: rgba(20, 20, 22, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --glass-blur: 32px;
+    --glass-radius: 1.5rem;
+
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 12px 24px -8px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 32px 64px -16px rgba(0, 0, 0, 0.8);
+
+    --surface-lowest: #0a0a0b;
+    --surface-low: #121214;
+
+    --surfaceContainerLowest: #050505;
+    --surfaceContainerLow: #0a0a0b;
+    --surfaceContainerHighest: #2c2c2e;
+
+    --mesh-1: #0f172a;
+    --mesh-2: #1e1b4b;
+
+    --contrast-bg: #000000;
+    --contrast-text: #ffffff;
+    --contrast-text-dim: #a1a1aa;
+    --contrast-border: rgba(255, 255, 255, 0.12);
+    --contrast-hover: #18181b;
+    --contrast-item-bg: #111111;
+}
+
+body.dark-theme {
+    @include dark-variables;
+}
+
+@media (prefers-color-scheme: dark) {
+    body:not(.light-theme) {
+        @include dark-variables;
+    }
+}

@@ -1,0 +1,286 @@
+<div class="dashboardContainer">
+  <header class="pageHeader">
+    <div class="headerInfo">
+      <h1 class="pageTitle">{{ currentUser?.accountType === 'ORGANIZATION' ? 'Organization Hub' : 'Personal Dashboard' }}</h1>
+      <p class="pageSubtitle">{{ currentUser?.accountType === 'ORGANIZATION' ? 'Central monitoring for all organization projects and teams.' : 'Track your individual progress and daily tasks.' }}</p>
+    </div>
+  </header>
+  <div class="kpiGrid">
+    <div class="glassPanel kpiCard">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2 secondaryBlob"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">layers</span>
+      </div>
+      <p class="kpiLabel">Total Projects</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">24</span>
+        <span class="trend positive">
+          <span class="material-symbols-rounded">trending_up</span>
+          +12%
+        </span>
+      </div>
+      <div class="progressBarContainer mini">
+        <div class="progressBar" style="width: 65%"></div>
+      </div>
+    </div>
+
+    <div class="glassPanel kpiCard">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">task_alt</span>
+      </div>
+      <p class="kpiLabel">Tasks</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">142</span>
+        <span class="trend negative">
+          <span class="material-symbols-rounded">priority_high</span>
+          8 critical
+        </span>
+      </div>
+      <div class="progressBarContainer mini">
+        <div class="progressBar secondary" style="width: 82%"></div>
+      </div>
+    </div>
+
+    <div class="glassPanel kpiCard">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">schedule</span>
+      </div>
+      <p class="kpiLabel">Billable Hours</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">1,24</span>
+        <span class="trend neutral">
+          <span class="material-symbols-rounded">check_circle</span>
+          On Track
+        </span>
+      </div>
+      <div class="progressBarContainer mini">
+        <div class="progressBar" style="width: 45%"></div>
+      </div>
+    </div>
+
+    <div class="glassPanel kpiCard">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">verified</span>
+      </div>
+      <p class="kpiLabel">Approvals</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">08</span>
+        <span class="statusText">Pending Action</span>
+      </div>
+      <div class="progressBarContainer mini">
+        <div class="progressBar tertiary" style="width: 20%"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chartsGrid">
+    <div class="glassPanel chartCard productivityCard">
+      <div class="cardHeader">
+        <div class="headerContent">
+          <h3 class="cardTitle">Weekly Productivity</h3>
+          <p class="cardSubTitle">Output efficiency across all active departments</p>
+        </div>
+        <div class="chartLegend">
+          <div class="legendItem">
+            <span class="dot primary"></span>
+            <span class="legendLabel">Target</span>
+          </div>
+          <div class="legendItem">
+            <span class="dot tertiary"></span>
+            <span class="legendLabel">Actual</span>
+          </div>
+        </div>
+      </div>
+      <div class="cardIllustration">
+        <!-- Reverting to static illustration temporarily to fix build -->
+        <div class="barChart">
+          <div class="bar" style="height: 40%"></div>
+          <div class="bar" style="height: 70%"></div>
+          <div class="bar" style="height: 50%"></div>
+          <div class="bar" style="height: 90%"></div>
+          <div class="bar" style="height: 60%"></div>
+        </div>
+      </div>
+      <div class="chartXAxis">
+        <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+      </div>
+    </div>
+
+    <div class="allocationColumn">
+      <div class="integratedStats glossyDashboard">
+        <div class="iStat">
+          <span class="iLabel">Active</span>
+          <span class="iValue">{{ activeCount }}</span>
+        </div>
+        <div class="iStat">
+          <span class="iLabel">Pending</span>
+          <span class="iValue danger">{{ pendingCount }}</span>
+        </div>
+        <div class="iStat">
+          <span class="iLabel">Completed</span>
+          <span class="iValue success">{{ completedCount }}</span>
+        </div>
+      </div>
+
+      <div class="glassPanel chartCard allocationCard">
+        <div class="cardBlobs">
+          <div class="blob blob1"></div>
+          <div class="blob blob2 secondaryBlob"></div>
+        </div>
+        <h3 class="cardTitle">Task Allocation</h3>
+        <p class="cardSubTitle">Resource distribution by sector</p>
+
+        <div class="allocationChartContainer">
+          <div class="ringChart">
+            <svg class="ringSvg" viewBox="0 0 192 192">
+              <circle class="ringBg" cx="96" cy="96" r="80"></circle>
+              <circle class="ringSegment primary" cx="96" cy="96" r="80" style="stroke-dashoffset: 150"></circle>
+              <circle class="ringSegment secondary" cx="96" cy="96" r="80" style="stroke-dashoffset: 350"></circle>
+              <circle class="ringSegment tertiary" cx="96" cy="96" r="80" style="stroke-dashoffset: 450"></circle>
+            </svg>
+            <div class="ringContent">
+              <span class="ringValue">142</span>
+              <span class="ringLabel">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="allocationLegend">
+          <div class="allocationLegendItem">
+            <div class="labelGroup">
+              <span class="dot primary"></span>
+              <span class="label">Core Development</span>
+            </div>
+            <span class="value">45%</span>
+          </div>
+          <div class="allocationLegendItem">
+            <div class="labelGroup">
+              <span class="dot secondary"></span>
+              <span class="label">Marketing Ops</span>
+            </div>
+            <span class="value">30%</span>
+          </div>
+          <div class="allocationLegendItem">
+            <div class="labelGroup">
+              <span class="dot tertiary"></span>
+              <span class="label">Research Labs</span>
+            </div>
+            <span class="value">25%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottomGrid">
+    <div class="glassPanel projectsPanel">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2 secondaryBlob"></div>
+      </div>
+      <div class="panelHeader">
+        <h3 class="panelTitle">Current Focus Projects</h3>
+        <button class="textButton">View All</button>
+      </div>
+      <div class="projectsList">
+        <div class="projectItem">
+          <div class="projectInfo">
+            <div class="projectDetails">
+              <h4 class="projectName">Project Obsidian</h4>
+              <p class="projectStatus">Infrastructure Overhaul</p>
+            </div>
+            <span class="projectPercentage primary">82%</span>
+          </div>
+          <div class="progressBarContainer thin">
+            <div class="progressBar" style="width: 82%"></div>
+          </div>
+        </div>
+        <div class="projectItem">
+          <div class="projectInfo">
+            <div class="projectDetails">
+              <h4 class="projectName">Luminous Mobile v3</h4>
+              <p class="projectStatus">UX Research Phase</p>
+            </div>
+            <span class="projectPercentage secondary">45%</span>
+          </div>
+          <div class="progressBarContainer thin">
+            <div class="progressBar secondary" style="width: 45%"></div>
+          </div>
+        </div>
+        <div class="projectItem">
+          <div class="projectInfo">
+            <div class="projectDetails">
+              <h4 class="projectName">Quantum API Shell</h4>
+              <p class="projectStatus">Security Audit</p>
+            </div>
+            <span class="projectPercentage tertiary">15%</span>
+          </div>
+          <div class="progressBarContainer thin">
+            <div class="progressBar tertiary" style="width: 15%"></div>
+          </div>
+        </div>
+        <div class="projectItem">
+          <div class="projectInfo">
+            <div class="projectDetails">
+              <h4 class="projectName">Nebula Marketplace</h4>
+              <p class="projectStatus">Final Deployment</p>
+            </div>
+            <span class="projectPercentage primary">95%</span>
+          </div>
+          <div class="progressBarContainer thin">
+            <div class="progressBar" style="width: 95%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glassPanel activityPanel">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2 secondaryBlob"></div>
+      </div>
+      <div class="panelHeader">
+        <h3 class="panelTitle">Recent Activity</h3>
+        <button class="iconButton mini">
+          <span class="material-symbols-rounded">refresh</span>
+        </button>
+      </div>
+      <div class="timeline" *ngIf="!isLoading">
+        <div class="timelineItem" *ngFor="let activity of recentActivities">
+          <div class="timelineDot" [class.primary]="activity.type === 'primary'" [class.secondary]="activity.type === 'secondary'" [class.tertiary]="activity.type === 'tertiary'"></div>
+          <div class="activityCard mini">
+            <div class="activityHeader">
+              <span class="actorName">{{ activity.actorName }}</span>
+              <span class="timeAgo">{{ activity.timeAgo }}</span>
+            </div>
+            <p class="activityDesc">{{ activity.activityDesc }}</p>
+          </div>
+        </div>
+        
+        <div class="emptyState" *ngIf="recentActivities.length === 0">
+          <span class="material-symbols-rounded">history</span>
+          <p>No recent activity recorded.</p>
+        </div>
+      </div>
+      
+      <div class="loadingContainer" *ngIf="isLoading">
+        <div class="skeleton activitySkeleton" *ngFor="let i of [1,2,3]"></div>
+      </div>
+    </div>
+  </div>
+</div>

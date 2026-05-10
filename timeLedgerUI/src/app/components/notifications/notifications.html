@@ -1,0 +1,121 @@
+<div class="notificationsContainer">
+  <header class="pageHeader">
+    <div class="headerInfo">
+      <h1 class="pageTitle">Notifications</h1>
+      <p class="pageSubtitle">Stay updated with the latest activity and alerts in your workspace.</p>
+    </div>
+    <div class="headerActions" *ngIf="unreadCount > 0">
+      <button class="secondaryButton" (click)="markAllAsRead()">
+        <span class="material-symbols-rounded">done_all</span>
+        Mark all as read
+      </button>
+    </div>
+  </header>
+
+  <div class="kpiGrid">
+    <div class="glassPanel kpiCard">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2 secondaryBlob"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">notifications</span>
+      </div>
+      <p class="kpiLabel">Total Notifications</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">{{ notifications.length }}</span>
+      </div>
+    </div>
+
+    <div class="glassPanel kpiCard">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">mark_as_unread</span>
+      </div>
+      <p class="kpiLabel">Unread</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">{{ unreadCount }}</span>
+      </div>
+    </div>
+
+    <div class="glassPanel kpiCard">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">priority_high</span>
+      </div>
+      <p class="kpiLabel">Action Required</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">4</span>
+      </div>
+    </div>
+
+    <div class="glassPanel kpiCard">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">history</span>
+      </div>
+      <p class="kpiLabel">Last 24 Hours</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">12</span>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="notificationsList">
+    <div class="notificationCard" *ngFor="let notification of notifications" [class.unread]="!notification.read"
+      [class]="notification.type" (click)="!notification.read ? markAsRead(notification.id) : null">
+
+      <div class="cardBlobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+      </div>
+
+      <div class="timeContainer">
+        <span class="time">{{ notification.time | date:'shortTime' }}</span>
+      </div>
+
+      <div class="typeIndicator" [class]="notification.type">
+        <span class="material-symbols-rounded">{{ getTypeIcon(notification.type) }}</span>
+        <div class="unreadBadge" *ngIf="!notification.read"></div>
+      </div>
+
+      <div class="cardContent">
+        <div class="contentHeader">
+          <span class="category">{{ notification.category }}</span>
+        </div>
+        <h3 class="title">{{ notification.title }}</h3>
+        <p class="message">{{ notification.message }}</p>
+      </div>
+
+      <div class="cardActions">
+        <button class="iconBtn success" (click)="markAsRead(notification.id); $event.stopPropagation()"
+          [class.read]="notification.read" [title]="notification.read ? 'Marked as Read' : 'Mark as Read'">
+          <span class="material-symbols-rounded">{{ notification.read ? 'done_all' : 'done' }}</span>
+        </button>
+        <button class="iconBtn delete" (click)="deleteNotification(notification.id); $event.stopPropagation()"
+          title="Delete">
+          <span class="material-symbols-rounded">delete</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="emptyState" *ngIf="notifications.length === 0">
+      <div class="emptyIcon">
+        <span class="material-symbols-rounded">notifications_off</span>
+      </div>
+      <h3>All caught up!</h3>
+      <p>You have no new notifications.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1187 @@
+.tasksContainer {
+    // padding: 1.5rem 2rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+
+    @media (max-width: 1024px) {
+        padding: 1rem;
+    }
+}
+
+
+.iconButton {
+    .badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #ff3d71; // High contrast red
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 800;
+        min-width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 2px solid #1a1a25;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        z-index: 10;
+    }
+}
+
+.searchDrawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 2000;
+    visibility: hidden;
+    pointer-events: none;
+
+    &.open {
+        visibility: visible;
+        pointer-events: all;
+
+        .drawerOverlay {
+            opacity: 1;
+        }
+
+        .drawerContent {
+            transform: translateX(0);
+        }
+    }
+
+    .drawerOverlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        opacity: 0;
+        transition: opacity 0.4s;
+    }
+
+    .drawerContent {
+        position: absolute;
+        top: 1.5rem;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 450px;
+        background: linear-gradient(to bottom, rgba(25, 25, 35, 0.8), rgba(15, 15, 25, 0.9));
+        backdrop-filter: blur(30px) saturate(160%);
+        -webkit-backdrop-filter: blur(30px) saturate(160%);
+        border-radius: var(--glass-radius);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transform: translateX(calc(100% + 2rem));
+        transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        padding: 2.5rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+
+        @media (max-width: 600px) {
+            width: calc(100% - 3rem);
+            right: 1.5rem;
+        }
+    }
+
+    .drawerHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
+
+        .drawerTitle {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--onSurface);
+            letter-spacing: -0.02em;
+        }
+    }
+
+    .drawerBody {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .emptyState {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 0;
+        opacity: 0.3;
+        color: var(--onSurface);
+        gap: 1.5rem;
+
+        span {
+            font-size: 4rem;
+        }
+
+        p {
+            font-weight: 600;
+        }
+    }
+
+    .archivedList {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .archivedItem {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.25rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+
+        .archivedItemContent {
+            .taskTitle {
+                font-size: 1rem;
+                font-weight: 700;
+                margin-bottom: 0.25rem;
+            }
+
+            .taskDesc {
+                font-size: 0.8rem;
+                opacity: 0.6;
+            }
+        }
+
+        .restoreBtn {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(var(--primary-rgb), 0.1) !important;
+            color: var(--primary) !important;
+        }
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.06);
+
+            .restoreBtn {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    }
+
+    .activityList {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        position: relative;
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: 17px;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+    }
+
+    .activityItem {
+        display: flex;
+        gap: 1.25rem;
+        position: relative;
+        z-index: 1;
+
+        .activityIcon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--surfaceContainerLow);
+            border: 1px solid var(--outline-variant);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            span {
+                font-size: 1.2rem;
+                color: var(--primary);
+            }
+        }
+
+        .activityContent {
+            flex: 1;
+            padding-top: 0.4rem;
+
+            .activityMessage {
+                font-size: 0.95rem;
+                font-weight: 500;
+                color: var(--onSurface);
+                margin-bottom: 0.25rem;
+                line-height: 1.4;
+            }
+
+            .activityTime {
+                font-size: 0.75rem;
+                color: var(--onSurfaceVariant);
+                opacity: 0.6;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.02em;
+            }
+        }
+    }
+
+    .searchField {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        background: var(--surface-lowest);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        transition: all 0.3s;
+
+        &:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+            transform: translateY(-2px);
+        }
+
+        span {
+            color: var(--primary);
+            font-size: 1.75rem;
+        }
+
+        .drawerSearchInput {
+            background: transparent;
+            border: none;
+            color: var(--onSurface);
+            font-size: 1.1rem;
+            width: 100%;
+            font-weight: 500;
+
+            &::placeholder {
+                color: var(--onSurfaceVariant);
+                opacity: 0.5;
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
+    }
+}
+
+.addTaskBtn {
+    width: auto !important;
+}
+
+.kanbanBoard {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 2rem;
+    flex: 1;
+    align-items: stretch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--outline) transparent;
+    position: relative;
+
+    &::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--outline);
+        border-radius: 10px;
+    }
+}
+
+.kanbanColumn {
+    min-width: 280px;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    @media (max-width: 320px) {
+        min-width: 240px;
+        width: 240px;
+    }
+}
+
+.columnHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.5rem;
+    cursor: grab;
+
+    &:active {
+        cursor: grabbing;
+    }
+
+    .columnTitleGroup {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .columnTitle {
+        font-size: 0.875rem;
+        font-weight: 800;
+        color: var(--onSurface);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .taskCount {
+        background: var(--surfaceContainerLow);
+        color: var(--onSurfaceVariant);
+        padding: 0.15rem 0.5rem;
+        border-radius: 99px;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+}
+
+.columnContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-height: 400px;
+    flex: 1;
+    padding: 0.5rem;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.glassPanel {
+    background: var(--glass-background);
+    backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05),
+        inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow:
+            0 20px 25px -5px rgba(0, 0, 0, 0.2),
+            0 10px 10px -5px rgba(0, 0, 0, 0.1),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+}
+
+.taskCard {
+    padding: 1.5rem;
+    cursor: grab;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+
+    &:active {
+        cursor: grabbing;
+    }
+
+    .cardBlobs {
+        .blob {
+            width: 10rem;
+            height: 10rem;
+            top: -4rem;
+            right: -4rem;
+            opacity: 0.05;
+            background: var(--primary);
+            filter: blur(40px);
+        }
+    }
+
+    .taskHeader,
+    .taskTitle,
+    .taskDesc,
+    .taskFooter {
+        position: relative;
+        z-index: 1;
+    }
+
+    .taskHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .projectBadge {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--accent-color, var(--primary));
+        text-transform: uppercase;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        letter-spacing: 0.05em;
+        border: 1px solid color-mix(in srgb, var(--accent-color, var(--primary)), transparent 60%);
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &.priority-low {
+        --accent-color: #4cd964; // Green
+        border-left: 5px solid #4cd964;
+    }
+
+    &.priority-medium {
+        --accent-color: #ffcc00; // Yellow/Orange
+        border-left: 5px solid #ffcc00;
+    }
+
+    &.priority-high {
+        --accent-color: #ff3b30; // Red
+        border-left: 5px solid #ff3b30;
+    }
+
+    &.priority-critical {
+        --accent-color: #ff2d55; // Pinkish Red
+        border-left: 5px solid #ff2d55;
+    }
+
+    // Remove the before pseudo-element as border-left is more accurate to the screenshot
+    &::before {
+        display: none;
+    }
+
+    .taskTitle {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--onSurface);
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+        letter-spacing: -0.01em;
+    }
+
+    .taskDesc {
+        font-size: 0.85rem;
+        color: var(--onSurfaceVariant);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        opacity: 0.7;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .taskFooter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 1.25rem;
+        margin-top: auto;
+    }
+
+    .assignee {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .avatar {
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .assigneeName {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--onSurface);
+            opacity: 0.9;
+        }
+    }
+
+    .dueDate {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        color: var(--onSurfaceVariant);
+        font-weight: 500;
+
+        span:first-child {
+            font-size: 1rem;
+            opacity: 0.6;
+        }
+    }
+}
+
+.addCardPlaceholder {
+    background: transparent;
+    border: 2px dashed var(--outline);
+    border-radius: var(--glass-radius);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--onSurfaceVariant);
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.6;
+
+    &:hover {
+        opacity: 1;
+        background: color-mix(in srgb, var(--surface), transparent 90%);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    span:first-child {
+        font-size: 1.25rem;
+    }
+}
+
+.iconButton.mini {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--onSurface);
+    opacity: 0.7;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        background: var(--surfaceContainerLow);
+        color: var(--onSurface);
+    }
+}
+
+/* Drag & Drop Premium Styles */
+.cdk-drag-preview {
+    box-sizing: border-box;
+    border-radius: var(--glass-radius);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7) !important;
+    pointer-events: none;
+    z-index: 5000 !important;
+    width: 280px !important;
+    overflow: hidden !important;
+    padding: 1rem; // Add internal padding to the dragging card
+
+    // Hide scrollbars in preview
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    // Maintain original appearance but with shadow
+    background: inherit;
+    backdrop-filter: inherit;
+    border: inherit;
+}
+
+.cdk-drag-placeholder {
+    opacity: 0;
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Special placeholder for columns when reordering
+.kanbanColumn.cdk-drag-preview {
+    box-shadow: 0 60px 120px rgba(0, 0, 0, 0.8) !important;
+    z-index: 6000 !important;
+    width: 280px !important;
+
+    // Remove the display none to show full column content
+    .columnContent,
+    .addColumnSection {
+        display: flex !important;
+    }
+}
+
+.kanbanBoard.cdk-drop-list-dragging .kanbanColumn.cdk-drag-placeholder {
+    opacity: 0.1 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 2px dashed rgba(255, 255, 255, 0.1) !important;
+    border-radius: 20px !important;
+}
+
+// Custom drop indicator to show where the card will land
+.columnContent {
+    position: relative;
+
+    &.cdk-drop-list-dragging::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(var(--primary-rgb), 0.03);
+        border: 2px dashed rgba(var(--primary-rgb), 0.1);
+        border-radius: 12px;
+        pointer-events: none;
+        z-index: 0;
+    }
+}
+
+.cdk-drag-animating {
+    transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.columnContent.cdk-drop-list-dragging .taskCard:not(.cdk-drag-placeholder) {
+    transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Premium smooth list transition */
+.columnContent {
+    transition: background-color 0.3s ease;
+    border-radius: 12px;
+    padding: 0.5rem;
+    margin: -0.5rem;
+    min-height: 100px;
+
+    &.cdk-drop-list-dragging {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+}
+
+// Ensure the task card itself looks good when being dragged from
+.taskCard.cdk-drag-dragging {
+    opacity: 0.4;
+    filter: grayscale(0.5) blur(1px);
+    cursor: grabbing;
+}
+
+.taskMenuBtn {
+    z-index: 10;
+    opacity: 0.4;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(12px);
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    span {
+        font-size: 1.25rem !important;
+        color: white !important;
+    }
+}
+
+.taskCard:hover .taskMenuBtn {
+    opacity: 1;
+}
+
+.projectGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cardBlobs {
+    .blob {
+        position: absolute;
+        width: 12rem;
+        height: 12rem;
+        border-radius: 50%;
+        opacity: 0.1;
+        filter: blur(50px);
+        pointer-events: none;
+        z-index: 0;
+
+        &.ripple-1 {
+            top: -6rem;
+            right: -6rem;
+            background: var(--primary);
+            animation: floatBlob 8s infinite alternate ease-in-out;
+        }
+
+        &.ripple-2 {
+            bottom: -8rem;
+            left: -4rem;
+            background: var(--tertiary);
+            animation: floatBlob 12s infinite alternate-reverse ease-in-out;
+            opacity: 0.05;
+        }
+
+        &.ripple-3 {
+            top: 20%;
+            left: 10%;
+            width: 8rem;
+            height: 8rem;
+            background: var(--secondary);
+            animation: floatBlob 10s infinite alternate ease-in-out;
+            opacity: 0.03;
+        }
+    }
+}
+
+/* Floating Context Menu */
+.floatingMenu {
+    position: absolute;
+    z-index: 5000;
+    min-width: 220px;
+    background: rgba(15, 15, 20, 0.95) !important;
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    animation: menuFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    .menuItem {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        span:first-child {
+            font-size: 1.25rem;
+            opacity: 0.7;
+        }
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+
+            span:first-child {
+                opacity: 1;
+            }
+        }
+
+        &.danger {
+            color: #ff5252;
+
+            &:hover {
+                background: rgba(255, 82, 82, 0.1);
+            }
+        }
+
+        &.hasSubmenu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .submenuIcon {
+                font-size: 1rem;
+                opacity: 0.5;
+            }
+        }
+
+        .shortcut {
+            margin-left: auto;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            color: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    .menuDivider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.08);
+        margin: 0.4rem 0.5rem;
+    }
+
+    .menuSection {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.5rem 0.75rem 0.25rem;
+    }
+}
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes floatBlob {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(15%, 10%) scale(1.1);
+    }
+}
+
+@keyframes pulseRipple {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Button Click Ripple (CSS fallback) */
+.iconButton,
+.primaryButton {
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        opacity: 0;
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.5s, opacity 0.5s;
+        pointer-events: none;
+    }
+
+    &:active::after {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 1;
+        transition: 0s;
+    }
+}
+
+/* Modal Styles */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 6000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.modalContainer {
+    width: 100%;
+    max-width: 550px;
+    background: rgba(20, 20, 30, 0.95) !important;
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+
+    &.small {
+        max-width: 400px;
+    }
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .modalTitle {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--onSurface);
+        letter-spacing: -0.02em;
+    }
+}
+
+.modalBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--onSurfaceVariant);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.6;
+    }
+
+    input,
+    textarea,
+    select {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 1rem 1.25rem;
+        color: var(--onSurface);
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+
+        &:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+            transform: translateY(-2px);
+        }
+
+        &::placeholder {
+            color: var(--onSurfaceVariant);
+            opacity: 0.4;
+        }
+    }
+
+    textarea {
+        resize: none;
+    }
+
+    select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white'%3E%3Cpath d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 3rem;
+
+        option {
+            background: #1a1a25;
+            color: white;
+            padding: 1rem;
+        }
+    }
+}
+
+.inputRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    .primaryButton,
+    .secondaryButton {
+        width: auto !important;
+    }
+}
+
+/* Submenu Styles */
+.menuItem.hasSubmenu {
+    position: relative;
+
+    .submenu {
+        position: absolute;
+        left: 100%;
+        top: 0;
+        margin-left: 0.5rem;
+        display: none;
+        min-width: 180px;
+        z-index: 100;
+
+        &.side-left {
+            left: auto;
+            right: 100%;
+            margin-left: 0;
+            margin-right: 0.5rem;
+        }
+    }
+
+    &:hover .submenu {
+        display: block;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.highlight-task {
+    animation: highlightTask 2s ease;
+}
+
+.timerBar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(var(--primary-rgb), 0.1);
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
+    border-radius: 12px;
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
+
+    &.running {
+        background: rgba(var(--primary-rgb), 0.15);
+        border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.2);
+    }
+
+    .timerStatus {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--primary);
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulseTimer 1.5s infinite;
+        }
+    }
+
+    .timerInfo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+
+        .timerClock {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--onSurface);
+        }
+
+        .timerTask {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-left: 0.75rem;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    }
+
+    .timerControl {
+        margin-left: 0.5rem;
+        background: var(--primary) !important;
+        color: white !important;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    .finishBtn {
+        background: #00c853 !important;
+        color: white !important;
+        margin-left: 0.25rem;
+
+        &:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 200, 83, 0.4);
+        }
+    }
+}
+
+@keyframes pulseTimer {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes highlightTask {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: inherit;
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    20%,
+    80% {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.4);
+        border-color: var(--primary);
+    }
+}
