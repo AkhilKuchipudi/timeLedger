@@ -77,9 +77,9 @@ h6 {
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: color-mix(in srgb, var(--onSurface) 4%, transparent);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid color-mix(in srgb, var(--onSurface) 10%, transparent);
     color: var(--onSurface);
     font-weight: 700;
     font-size: 0.85rem;
@@ -87,7 +87,7 @@ h6 {
     padding: 0.8rem 1.75rem;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 
     .material-symbols-rounded {
         font-size: 20px;
@@ -95,10 +95,10 @@ h6 {
     }
 
     &:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.2);
+        background: color-mix(in srgb, var(--onSurface) 8%, transparent);
+        border-color: color-mix(in srgb, var(--onSurface) 20%, transparent);
         transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
         color: var(--onSurface);
     }
 
@@ -265,6 +265,11 @@ h6 {
     padding: 1.5rem 1.5rem 1.5rem 0;
     transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
+    &.noSidebar {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
+
     @media (max-width: 1024px) {
         margin-left: 0;
         padding: 1.5rem;
@@ -321,7 +326,7 @@ h6 {
         .pageTitle {
             font-size: 2.75rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #a5a5b2 100%);
+            background: var(--page-title-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -350,15 +355,15 @@ h6 {
     align-items: center;
     gap: 1.25rem;
     width: fit-content;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+    background: color-mix(in srgb, var(--onSurface) 4%, transparent);
     padding: 0.4rem 1.1rem;
     border-radius: 99px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid color-mix(in srgb, var(--onSurface) 10%, transparent);
     flex-wrap: wrap;
     backdrop-filter: blur(16px);
     box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.1),
-        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        0 4px 15px rgba(0, 0, 0, 0.05),
+        inset 0 1px 1px rgba(255, 255, 255, 0.05);
 
     @media (max-width: 480px) {
         padding: 0.35rem 1rem;
@@ -377,7 +382,7 @@ h6 {
             right: -0.6rem;
             height: 12px;
             width: 1px;
-            background: rgba(255, 255, 255, 0.1);
+            background: color-mix(in srgb, var(--onSurface) 10%, transparent);
         }
     }
 

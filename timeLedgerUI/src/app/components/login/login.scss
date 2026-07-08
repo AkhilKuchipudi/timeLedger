@@ -1,210 +1,626 @@
-.authContainer {
+.landingPage {
     display: flex;
     flex-direction: column;
-    min-height: 90vh;
-    padding: 2rem;
-    background: radial-gradient(circle at top right, rgba(var(--primary-rgb), 0.05), transparent 40%),
-                radial-gradient(circle at bottom left, rgba(var(--secondary-rgb), 0.05), transparent 40%);
+    min-height: 100vh;
+    background: radial-gradient(circle at 80% 20%, var(--landing-bg-start) 0%, var(--landing-bg-end) 100%);
+    color: var(--onSurface);
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
 
-    .authContent {
-        max-width: 480px;
-        width: 100%;
-        margin: 4rem auto;
-        padding: 3.5rem;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    &::before {
+        content: '';
+        position: absolute;
+        width: 60rem;
+        height: 60rem;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(var(--primary-rgb), 0.08) 0%, transparent 70%);
+        top: -15rem;
+        right: -15rem;
+        pointer-events: none;
+        z-index: 0;
+    }
+}
+
+/* Landing Header Styles */
+.landingHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.75rem 4rem;
+    position: relative;
+    z-index: 10;
+
+    @media (max-width: 1024px) {
+        padding: 1.5rem 2rem;
+    }
+
+    .landingLogo {
         display: flex;
-        flex-direction: column;
-        gap: 1rem;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+
+        .logoIcon {
+            font-size: 2rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .logoText {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--onSurface);
+        }
     }
 
-    .authTitle {
-        font-size: 2.75rem;
-        font-weight: 800;
-        color: var(--onSurface);
-        margin-bottom: 0.5rem;
-        letter-spacing: -0.05em;
-        line-height: 1;
-        text-align: center;
-    }
+    .landingNav {
+        display: flex;
+        gap: 2.5rem;
 
-    .authSubtitle {
-        font-size: 1.1rem;
-        color: var(--onSurfaceVariant);
-        margin-bottom: 2rem;
-        opacity: 0.7;
-        text-align: center;
-        font-weight: 500;
-    }
+        @media (max-width: 900px) {
+            display: none;
+        }
 
-    .accountTypeToggle {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-        padding: 0.5rem;
-        background: rgba(var(--primary-rgb), 0.05);
-        border: 1px solid var(--outline);
-        border-radius: 1rem;
-        margin-bottom: 2rem;
-
-        button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem;
-            border: none;
-            background: transparent;
-            color: var(--onSurfaceVariant);
-            font-size: 0.9rem;
+        .navItem {
+            font-size: 0.95rem;
             font-weight: 600;
-            border-radius: 0.75rem;
+            color: var(--onSurfaceVariant);
+            text-decoration: none;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: color 0.2s ease;
+            position: relative;
 
-            .material-symbols-rounded {
-                font-size: 1.25rem;
+            &:hover {
+                color: var(--primary);
             }
 
             &.active {
-                background: var(--contrast-bg);
                 color: var(--primary);
+                font-weight: 700;
+            }
+        }
+    }
+
+    .headerActions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+
+        .actionBtn {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--onSurfaceVariant);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0.25rem;
+            position: relative;
+
+            &:hover {
+                color: var(--primary);
+            }
+
+            &.active {
+                color: var(--primary);
+                font-weight: 700;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    background: var(--primary);
+                    border-radius: 99px;
+                }
+            }
+        }
+
+        .registerBtn {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--register-btn-color);
+            background: var(--register-btn-bg);
+            border-radius: 99px;
+            padding: 0.65rem 1.75rem;
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            border: 1px solid var(--register-btn-border);
+
+            &:hover {
+                transform: translateY(-1px);
                 box-shadow: var(--shadow-md);
             }
 
-            &:hover:not(.active) {
-                background: rgba(var(--primary-rgb), 0.1);
+            &:active {
+                transform: translateY(0);
             }
         }
     }
+}
 
-    .authForm {
-        display: flex;
-        flex-direction: column;
-        gap: 1.75rem;
+/* Split Content Layout */
+.landingContent {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 4rem;
+    padding: 1.5rem 6rem 4rem 6rem;
+    align-items: center;
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+
+    @media (max-width: 1200px) {
+        padding: 1.5rem 3rem 4rem 3rem;
+        gap: 2rem;
     }
 
-    .formField {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
+    @media (max-width: 960px) {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 3rem;
+    }
+}
 
-        label {
-            font-size: 0.85rem;
-            font-weight: 700;
+/* Hero Section Styles */
+.heroSection {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    height: 100%;
+    justify-content: center;
+
+    @media (max-width: 960px) {
+        text-align: center;
+        align-items: center;
+    }
+
+    .heroText {
+        .heroTitle {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(2.75rem, 4.5vw, 3.8rem);
+            font-weight: 800;
+            color: var(--hero-title-color);
+            line-height: 1.15;
+            letter-spacing: -0.04em;
+            margin: 0;
+            transition: color 0.4s ease;
+        }
+
+        .heroSubtitle {
+            font-size: 1.2rem;
+            font-weight: 500;
             color: var(--onSurfaceVariant);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+            opacity: 0.7;
+            margin-top: 1rem;
+            margin-bottom: 0;
+            max-width: 440px;
+            line-height: 1.5;
 
-        .labelRow {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .forgotLink {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--primary);
-            text-decoration: none;
-            transition: opacity 0.2s;
-
-            &:hover {
-                opacity: 0.8;
-                text-decoration: underline;
+            @media (max-width: 960px) {
+                margin-left: auto;
+                margin-right: auto;
             }
         }
+    }
+}
+
+/* Premium Rounded Illustration Frame */
+.illustrationWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    position: relative;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--onSurface) 8%, transparent);
+    background: color-mix(in srgb, var(--onSurface) 2%, transparent);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+
+    .heroImage {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        border-radius: 18px;
+        filter: var(--hero-shadow);
+        animation: floatingIllustration 6s infinite ease-in-out;
+        transition: filter 0.4s ease;
+    }
+}
+
+@keyframes floatingIllustration {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-12px) rotate(0.5deg);
+    }
+}
+
+.downloadBadges {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    @media (max-width: 480px) {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .storeBtn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: transparent;
+        border: 1px solid var(--outline);
+        border-radius: 12px;
+        padding: 0.6rem 1.25rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        color: var(--onSurface);
+
+        @media (max-width: 480px) {
+            justify-content: center;
+        }
+
+        &:hover {
+            background: color-mix(in srgb, var(--onSurface) 4%, transparent);
+            border-color: color-mix(in srgb, var(--onSurface) 15%, transparent);
+            transform: translateY(-1px);
+        }
+
+        .storeIcon {
+            color: var(--onSurface);
+            opacity: 0.85;
+            flex-shrink: 0;
+            fill: currentColor;
+        }
+
+        .storeBtnText {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+            text-align: left;
+
+            .smallText {
+                font-size: 0.65rem;
+                font-weight: 500;
+                text-transform: uppercase;
+                opacity: 0.65;
+                letter-spacing: 0.05em;
+            }
+
+            .largeText {
+                font-size: 0.95rem;
+                font-weight: 700;
+                letter-spacing: -0.01em;
+            }
+        }
+    }
+}
+
+/* Login Card Section Styles */
+.loginSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    .loginCard {
+        width: 100%;
+        max-width: 450px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+}
+
+.accountTypeToggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    padding: 0.35rem;
+    background: color-mix(in srgb, var(--onSurface) 4%, transparent);
+    border-radius: 14px;
+    border: 1px solid var(--outline);
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.7rem;
+        border: none;
+        background: transparent;
+        color: var(--onSurfaceVariant);
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        .material-symbols-rounded {
+            font-size: 1.2rem;
+        }
+
+        &.active {
+            background: var(--contrast-bg);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+            font-weight: 700;
+        }
+
+        &:hover:not(.active) {
+            background: color-mix(in srgb, var(--primary) 8%, transparent);
+        }
+    }
+}
+
+.authForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .inputField {
+        display: flex;
+        flex-direction: column;
     }
 
     .inputWrapper {
         position: relative;
         display: flex;
         align-items: center;
+        background: color-mix(in srgb, var(--onSurface) 4%, transparent);
+        border-radius: 12px;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
 
-        .material-symbols-rounded {
+        &:focus-within {
+            background: color-mix(in srgb, var(--onSurface) 6%, transparent);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.12);
+        }
+
+        .inputIcon {
             position: absolute;
             left: 1.25rem;
             color: var(--onSurfaceVariant);
-            opacity: 0.5;
+            opacity: 0.6;
             font-size: 1.25rem;
+            pointer-events: none;
         }
 
         input {
             width: 100%;
-            padding: 1.1rem 1.1rem 1.1rem 3.25rem;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
+            padding: 1.05rem 1.25rem 1.05rem 3.25rem;
+            background: transparent;
+            border: none;
             color: var(--onSurface);
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
             outline: none;
 
             &::placeholder {
                 color: var(--onSurfaceVariant);
-                opacity: 0.3;
+                opacity: 0.55;
+            }
+        }
+
+        .visibilityToggle {
+            position: absolute;
+            right: 1.25rem;
+            background: transparent;
+            border: none;
+            color: var(--onSurfaceVariant);
+            opacity: 0.6;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+
+            &:hover {
+                opacity: 0.9;
+                color: var(--primary);
             }
 
-            &:focus {
-                background: rgba(255, 255, 255, 0.05);
-                border-color: var(--primary);
-                box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1);
+            .material-symbols-rounded {
+                font-size: 1.25rem;
+            }
+        }
+    }
+}
+
+.formOptions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.1rem;
+
+    .checkboxContainer {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+        color: var(--onSurfaceVariant);
+        font-weight: 600;
+        user-select: none;
+        position: relative;
+
+        input {
+            display: none;
+        }
+
+        .checkmark {
+            width: 18px;
+            height: 18px;
+            border-radius: 5px;
+            background: color-mix(in srgb, var(--onSurface) 4%, transparent);
+            border: 1px solid var(--outline);
+            position: relative;
+            transition: all 0.2s ease;
+
+            &::after {
+                content: '';
+                position: absolute;
+                display: none;
+                left: 5px;
+                top: 2px;
+                width: 4px;
+                height: 8px;
+                border: solid white;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
+            }
+        }
+
+        input:checked ~ .checkmark {
+            background: var(--primary);
+            border-color: var(--primary);
+
+            &::after {
+                display: block;
             }
         }
     }
 
-    .submitBtn {
-        margin-top: 1rem;
-        padding: 1.1rem;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        border: none;
-        border-radius: 14px;
-        color: white;
-        font-size: 1.1rem;
-        font-weight: 700;
-        cursor: pointer;
+    .forgotLink {
+        color: var(--onSurfaceVariant);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+    }
+}
+
+.errorMessage {
+    background: rgba(var(--tertiary-rgb), 0.08);
+    border: 1px solid rgba(var(--tertiary-rgb), 0.15);
+    color: var(--tertiary);
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.submitBtn {
+    margin-top: 0.5rem;
+    padding: 1.05rem;
+    background: var(--submit-btn-bg);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: var(--submit-btn-shadow);
+    letter-spacing: 0.05em;
+
+    &:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.06);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.authDivider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0.5rem 0;
+
+    .dividerLine {
+        flex: 1;
+        height: 1px;
+        background: var(--outline);
+    }
+
+    .dividerText {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--onSurfaceVariant);
+        opacity: 0.6;
+        white-space: nowrap;
+    }
+}
+
+.socialRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+
+    .socialBtn {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 0.75rem;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 10px 20px rgba(var(--primary-rgb), 0.3);
+        padding: 0.9rem;
+        background: color-mix(in srgb, var(--onSurface) 4%, transparent);
+        border: 1px solid var(--outline);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
 
         &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(var(--primary-rgb), 0.4);
-            filter: brightness(1.1);
+            background: color-mix(in srgb, var(--onSurface) 8%, transparent);
+            transform: translateY(-1px);
+            border-color: color-mix(in srgb, var(--onSurface) 15%, transparent);
         }
 
         &:active {
             transform: translateY(0);
         }
 
-        .material-symbols-rounded {
-            font-size: 1.25rem;
+        .socialIcon {
+            display: block;
+            flex-shrink: 0;
         }
     }
+}
 
-    .authFooter {
-        margin-top: 2rem;
-        text-align: center;
-        padding-top: 1.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
+/* Responsiveness adjustments */
+@media (max-width: 960px) {
+    .landingContent {
+        padding-top: 1rem;
+    }
 
-        p {
-            font-size: 0.95rem;
-            color: var(--onSurfaceVariant);
-            opacity: 0.7;
-        }
+    .heroSection {
+        order: 2;
+    }
 
-        a {
-            color: var(--primary);
-            font-weight: 700;
-            text-decoration: none;
-
-            &:hover {
-                text-decoration: underline;
-            }
-        }
+    .loginSection {
+        order: 1;
     }
 }

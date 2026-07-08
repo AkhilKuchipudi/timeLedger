@@ -35,6 +35,11 @@ public class TimeEntryController {
         }
     }
 
+    @GetMapping("/consistency/{userId}")
+    public ResponseEntity<Double> getConsistencyScore(@PathVariable Long userId) {
+        return ResponseEntity.ok(timeEntryService.getConsistencyScore(userId));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<TimeEntry> updateEntry(@PathVariable Long id, @RequestBody TimeEntry entryDetails) {
         try {

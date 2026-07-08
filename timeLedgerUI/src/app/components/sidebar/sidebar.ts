@@ -55,7 +55,11 @@ export class Sidebar implements OnInit {
 
   goToProfile(event: Event) {
     this.handleLinkClick();
-    this.router.navigate(['/profile']);
+    if (this.isLoggedIn) {
+      this.router.navigate(['/profile']);
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 
   closeSignOutModal() {

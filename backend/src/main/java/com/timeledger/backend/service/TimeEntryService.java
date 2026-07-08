@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,29 @@ public class TimeEntryService {
 
     public void deleteEntry(Long id) {
         timeEntryRepository.deleteById(id);
+    }
+
+    public double getConsistencyScore(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+        List<TimeEntry> lastWeekEntries = timeEntryRepository.findByUserAndStartTimeBetween(
+            user, sevenDaysAgo, LocalDateTime.now()
+        );
+
+        if (lastWeekEntries.isEmpty()) {
+            return 0.0;
+        }
+
+        long totalMinutes = lastWeekEntries.stream()
+                .filter(e -> e.getDurationMinutes() != null)
+                .mapToLong(TimeEntry::getDurationMinutes)
+                .sum();
+
+        // Assuming 40 hours (2400 mins) a week is 100% consistency
+        double score = (totalMinutes / 2400.0) * 100;
+        return Math.min(score, 100.0);
     }
 
     public TimeEntry updateEntry(Long id, TimeEntry entryDetails) {

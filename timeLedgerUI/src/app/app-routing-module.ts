@@ -4,12 +4,12 @@ import { Profile } from './components/profile/profile';
 import { Dashboard } from './components/dashboard/dashboard';
 import { Tasks } from './components/tasks/tasks';
 import { Notifications } from './components/notifications/notifications';
-import { NotFoundComponent } from './components/not-found/not-found';
 import { Timesheets } from './components/timesheets/timesheets';
 import { Teams } from './components/teams/teams';
 import { Settings } from './components/settings/settings';
 import { Login } from './components/login/login';
 import { Register } from './components/register/register';
+import { NotFound } from './components/not-found/not-found';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -22,7 +22,7 @@ const routes: Routes = [
   { path: 'settings', component: Settings },
   { path: 'notifications', component: Notifications },
   { path: 'profile', component: Profile },
-  { path: '**', component: NotFoundComponent },
+  { path: '**', component: NotFound },
 ];
 
 @NgModule({

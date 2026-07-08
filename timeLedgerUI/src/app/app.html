@@ -1,5 +1,5 @@
-<app-sidebar></app-sidebar>
-<div class="mainContent">
+<app-sidebar *ngIf="showSidebar"></app-sidebar>
+<div class="mainContent" [class.noSidebar]="!showSidebar">
   <!-- Global Background Blobs -->
   <div class="cardBlobs globalBackground">
     <div class="blob blob-bg-1"></div>

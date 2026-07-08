@@ -24,6 +24,18 @@
     --outline: rgba(0, 0, 0, 0.08);
     --mini-profile-bg: rgba(255, 255, 255, 0.5);
 
+    --page-title-gradient: linear-gradient(135deg, #09090b 0%, #52525b 100%);
+
+    --landing-bg-start: #eef3fc;
+    --landing-bg-end: #f5f8fd;
+    --register-btn-bg: #ffffff;
+    --register-btn-color: #0a0a0b;
+    --register-btn-border: rgba(0, 0, 0, 0.08);
+    --hero-title-color: #2b56f5;
+    --hero-shadow: drop-shadow(0 20px 40px rgba(43, 86, 245, 0.12));
+    --submit-btn-bg: #2b56f5;
+    --submit-btn-shadow: 0 10px 24px rgba(43, 86, 245, 0.25);
+
     --glass-background: rgba(255, 255, 255, 0.6);
     --glass-border: rgba(184, 184, 184, 0.8);
     --glass-blur: 24px;
@@ -76,6 +88,18 @@
 
     --outline: rgba(255, 255, 255, 0.08);
     --mini-profile-bg: rgba(30, 41, 59, 0.4);
+
+    --page-title-gradient: linear-gradient(135deg, #ffffff 0%, #a5a5b2 100%);
+
+    --landing-bg-start: #0c0e14;
+    --landing-bg-end: #050507;
+    --register-btn-bg: #18181c;
+    --register-btn-color: #ffffff;
+    --register-btn-border: rgba(255, 255, 255, 0.08);
+    --hero-title-color: #5d7cff;
+    --hero-shadow: drop-shadow(0 20px 40px rgba(93, 124, 255, 0.08));
+    --submit-btn-bg: #5d7cff;
+    --submit-btn-shadow: 0 10px 24px rgba(93, 124, 255, 0.2);
 
     --glass-background: rgba(20, 20, 22, 0.6);
     --glass-border: rgba(255, 255, 255, 0.09);
