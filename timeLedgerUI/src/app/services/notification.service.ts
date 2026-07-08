@@ -31,4 +31,10 @@ export class NotificationService {
   deleteNotification(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  showError(message: string) {
+    console.error('UI Notification (Error):', message);
+    // You can integrate ngx-toastr or a custom snackbar here
+    alert(message);
+  }
 }

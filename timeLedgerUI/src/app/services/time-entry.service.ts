@@ -41,4 +41,8 @@ export class TimeEntryService {
   deleteEntry(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getConsistencyScore(userId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/consistency/${userId}`);
+  }
 }

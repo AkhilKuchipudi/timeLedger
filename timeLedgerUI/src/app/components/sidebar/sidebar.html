@@ -48,14 +48,15 @@
       </a>
 
       <!-- Admin Only -->
-      <a class="navLink" *ngIf="currentUser?.role === 'ROLE_ADMIN'" routerLink="/admin/logs" routerLinkActive="active" (click)="handleLinkClick()">
+      <a class="navLink" *ngIf="currentUser?.role === 'ROLE_ADMIN'" routerLink="/admin/logs" routerLinkActive="active"
+        (click)="handleLinkClick()">
         <span class="material-symbols-rounded">terminal</span>
         System Logs
       </a>
 
       <!-- PM and Admin -->
-      <a class="navLink" *ngIf="currentUser?.role === 'ROLE_ADMIN' || currentUser?.role === 'ROLE_PM'" routerLink="/teams" routerLinkActive="active" (click)="handleLinkClick()"
-        aria-label="Manage Teams">
+      <a class="navLink" *ngIf="currentUser?.role === 'ROLE_ADMIN' || currentUser?.role === 'ROLE_PM'"
+        routerLink="/teams" routerLinkActive="active" (click)="handleLinkClick()" aria-label="Manage Teams">
         <span class="material-symbols-rounded">groups</span>
         {{ currentUser?.accountType === 'ORGANIZATION' ? 'Invite & Manage Team' : 'Teams & Roles' }}
       </a>
@@ -73,7 +74,8 @@
       </a>
 
       <!-- Client and Others (Progress Reports) -->
-      <a class="navLink" *ngIf="currentUser?.role === 'ROLE_CLIENT'" routerLink="/reports" routerLinkActive="active" (click)="handleLinkClick()">
+      <a class="navLink" *ngIf="currentUser?.role === 'ROLE_CLIENT'" routerLink="/reports" routerLinkActive="active"
+        (click)="handleLinkClick()">
         <span class="material-symbols-rounded">monitoring</span>
         Progress Reports
       </a>
@@ -129,7 +131,8 @@
     </fieldset>
 
     <div class="profileWrapper">
-      <a class="userMiniProfile" [class.active]="isSignOutModalOpen" [routerLink]="isLoggedIn ? '/profile' : '/login'" (click)="handleLinkClick()">
+      <a class="userMiniProfile" [class.active]="isSignOutModalOpen" [routerLink]="isLoggedIn ? '/profile' : '/login'"
+        (click)="goToProfile($event)">
         <div class="miniAvatar">
           <img alt="User Avatar"
             [src]="isLoggedIn && currentUser?.avatar ? currentUser?.avatar : 'https://ui-avatars.com/api/?name=?&background=cbd5e1&color=64748b'" />

@@ -1,6 +1,7 @@
 package com.timeledger.backend.service;
 
 import com.timeledger.backend.model.Task;
+import com.timeledger.backend.model.TaskStatus;
 import com.timeledger.backend.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,18 @@ public class TaskService {
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public List<Task> getTasksByAssignee(Long userId) {
+        return taskRepository.findByAssigneeId(userId);
+    }
+
+    public long countByAssigneeAndStatus(Long userId, TaskStatus status) {
+        return taskRepository.countByAssigneeIdAndStatus(userId, status);
+    }
+
+    public long countByStatus(TaskStatus status) {
+        return taskRepository.countByStatus(status);
     }
 
     public Optional<Task> getTaskById(String id) {

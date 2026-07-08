@@ -40,7 +40,8 @@ export class TaskService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  getTaskStats(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/stats`);
+  getTaskStats(userId?: number): Observable<any> {
+    const url = userId ? `${this.apiUrl}/stats?userId=${userId}` : `${this.apiUrl}/stats`;
+    return this.http.get<any>(url);
   }
 }

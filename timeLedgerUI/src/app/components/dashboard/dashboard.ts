@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { SeoService } from '../../services/seo.service';
 import { TaskService, Task } from '../../services/task.service';
 import { TimeEntryService, TimeEntry } from '../../services/time-entry.service';
@@ -12,15 +12,17 @@ import { ChartConfiguration, ChartData } from 'chart.js';
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
-  activeCount = 0;
-  pendingCount = 0;
-  completedCount = 0;
-  totalHours = 0;
-  
-  tasks: Task[] = [];
-  recentActivities: any[] = [];
-  isLoading = true;
+  activeCount = signal(0);
+  pendingCount = signal(0);
+  completedCount = signal(0);
+  totalHours = signal(0);
+  consistencyScore = signal(0);
+
+  tasks = signal<Task[]>([]);
+  recentActivities = signal<any[]>([]);
+  isLoading = signal(true);
   currentUser: any;
+  teamSize = 0;
 
   public lineChartData: ChartData<'line'> = {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -81,46 +83,57 @@ export class Dashboard implements OnInit {
   }
 
   loadDashboardData() {
-    this.isLoading = true;
+    this.isLoading.set(true);
     const user = this.authService.getCurrentUser();
-    
+
     if (user && user.id) {
       // Load Task Stats
-      this.taskService.getTaskStats().subscribe({
+      this.taskService.getTaskStats(user.id).subscribe({
         next: (stats: any) => {
-          this.activeCount = stats.IN_PROGRESS || 0;
-          this.pendingCount = stats.TODO || 0;
-          this.completedCount = stats.DONE || 0;
-          
-          this.lineChartData.datasets[0].data = [2, 5, 3, 8, 4, 6, this.completedCount];
+          this.activeCount.set(stats.IN_PROGRESS || 0);
+          this.pendingCount.set(stats.TODO || 0);
+          this.completedCount.set(stats.DONE || 0);
+
+          this.lineChartData.datasets[0].data = [2, 5, 3, 8, 4, 6, this.completedCount()];
         }
       });
 
       // Load All Tasks for list
       this.taskService.getTasks().subscribe({
         next: (tasks: Task[]) => {
-          this.tasks = tasks;
-          this.isLoading = false;
+          this.tasks.set(tasks);
+          this.isLoading.set(false);
         },
         error: (err: any) => {
           console.error('Error loading tasks', err);
-          this.isLoading = false;
+          this.isLoading.set(false);
         }
       });
 
       // Load Time Entries for activity feed
       this.timeEntryService.getEntriesByUser(user.id).subscribe({
         next: (entries: TimeEntry[]) => {
-          this.recentActivities = entries.slice(0, 5).map((e: TimeEntry) => ({
+          const totalMins = entries.reduce((acc, curr) => acc + (curr.durationMinutes || 0), 0);
+          this.totalHours.set(Math.round(totalMins / 60));
+
+          const activities = entries.slice(0, 5).map((e: TimeEntry) => ({
             actorName: user.fullName || user.username,
             timeAgo: this.getTimeAgo(new Date(e.startTime)),
             activityDesc: `Logged ${e.project}: ${e.description}`,
             type: e.status === 'PRESENT' ? 'primary' : 'tertiary'
           }));
+          this.recentActivities.set(activities);
+        }
+      });
+
+      // Load Consistency Score
+      this.timeEntryService.getConsistencyScore(user.id).subscribe({
+        next: (score: number) => {
+          this.consistencyScore.set(Math.round(score));
         }
       });
     } else {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 

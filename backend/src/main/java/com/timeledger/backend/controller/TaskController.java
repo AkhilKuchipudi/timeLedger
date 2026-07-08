@@ -25,12 +25,19 @@ public class TaskController {
     }
 
     @GetMapping("/stats")
-    public Map<String, Long> getTaskStats() {
-        List<Task> tasks = taskService.getAllTasks();
+    public Map<String, Long> getTaskStats(@RequestParam(required = false) Long userId) {
         Map<String, Long> stats = new HashMap<>();
-        stats.put("TODO", tasks.stream().filter(t -> TaskStatus.TODO.equals(t.getStatus())).count());
-        stats.put("IN_PROGRESS", tasks.stream().filter(t -> TaskStatus.IN_PROGRESS.equals(t.getStatus())).count());
-        stats.put("DONE", tasks.stream().filter(t -> TaskStatus.COMPLETED.equals(t.getStatus())).count());
+        
+        if (userId != null) {
+            stats.put("TODO", taskService.countByAssigneeAndStatus(userId, TaskStatus.TODO));
+            stats.put("IN_PROGRESS", taskService.countByAssigneeAndStatus(userId, TaskStatus.IN_PROGRESS));
+            stats.put("DONE", taskService.countByAssigneeAndStatus(userId, TaskStatus.COMPLETED));
+        } else {
+            stats.put("TODO", taskService.countByStatus(TaskStatus.TODO));
+            stats.put("IN_PROGRESS", taskService.countByStatus(TaskStatus.IN_PROGRESS));
+            stats.put("DONE", taskService.countByStatus(TaskStatus.COMPLETED));
+        }
+        
         return stats;
     }
 
@@ -42,12 +49,12 @@ public class TaskController {
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
+    public Task createTask(@jakarta.validation.Valid @RequestBody Task task) {
         return taskService.createTask(task);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable String id, @RequestBody Task taskDetails) {
+    public ResponseEntity<Task> updateTask(@PathVariable String id, @jakarta.validation.Valid @RequestBody Task taskDetails) {
         try {
             return ResponseEntity.ok(taskService.updateTask(id, taskDetails));
         } catch (RuntimeException e) {

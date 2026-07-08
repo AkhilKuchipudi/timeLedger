@@ -150,7 +150,7 @@ export class Tasks implements OnInit {
   }
 
   // Task Actions
-  openTaskModal(columnId: string = 'todo', task?: Task) {
+  openTaskModal(columnId: string = 'todo', task?: Task | null) {
     this.isEditing = !!task;
     if (task) {
       this.modalTask = { ...task, columnId: columnId };
@@ -227,7 +227,8 @@ export class Tasks implements OnInit {
 
 
   // Menu Handlers
-  deleteTask(task: Task) {
+  deleteTask(task: Task | null) {
+    if (!task) return;
     this.taskService.deleteTask(task.id).subscribe(() => {
       this.loadTasks();
     });
@@ -235,7 +236,8 @@ export class Tasks implements OnInit {
   }
 
 
-  archiveTask(task: Task) {
+  archiveTask(task: Task | null) {
+    if (!task) return;
     for (const column of this.kanbanColumns) {
       const index = column.tasks.findIndex(t => t.id === task.id);
       if (index !== -1) {
@@ -335,7 +337,8 @@ export class Tasks implements OnInit {
     this.closeMenu();
   }
 
-  moveTaskToColumn(task: Task, targetColumnId: string) {
+  moveTaskToColumn(task: Task | null, targetColumnId: string) {
+    if (!task) return;
     for (const column of this.kanbanColumns) {
       const index = column.tasks.findIndex(t => t.id === task.id);
       if (index !== -1) {
@@ -348,7 +351,8 @@ export class Tasks implements OnInit {
     this.closeMenu();
   }
 
-  copyTaskLink(task: Task) {
+  copyTaskLink(task: Task | null) {
+    if (!task) return;
     console.log('Copying link for task:', task.id);
     this.closeMenu();
   }

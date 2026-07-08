@@ -16,10 +16,10 @@
       </div>
       <p class="kpiLabel">Total Projects</p>
       <div class="kpiValueRow">
-        <span class="kpiValue">24</span>
+        <span class="kpiValue">{{ tasks().length > 0 ? (tasks().length / 2 | number:'1.0-0') : '0' }}</span>
         <span class="trend positive">
           <span class="material-symbols-rounded">trending_up</span>
-          +12%
+          Active
         </span>
       </div>
       <div class="progressBarContainer mini">
@@ -37,14 +37,14 @@
       </div>
       <p class="kpiLabel">Tasks</p>
       <div class="kpiValueRow">
-        <span class="kpiValue">142</span>
-        <span class="trend negative">
-          <span class="material-symbols-rounded">priority_high</span>
-          8 critical
+        <span class="kpiValue">{{ tasks().length }}</span>
+        <span class="trend {{ pendingCount() > 5 ? 'negative' : 'neutral' }}">
+          <span class="material-symbols-rounded">assignment</span>
+          {{ pendingCount() }} pending
         </span>
       </div>
       <div class="progressBarContainer mini">
-        <div class="progressBar secondary" style="width: 82%"></div>
+        <div class="progressBar secondary" [style.width.%]="tasks().length > 0 ? (completedCount() / tasks().length * 100) : 0"></div>
       </div>
     </div>
 
@@ -56,16 +56,16 @@
       <div class="cardIcon opacityIcon">
         <span class="material-symbols-rounded">schedule</span>
       </div>
-      <p class="kpiLabel">Billable Hours</p>
+      <p class="kpiLabel">Total Hours</p>
       <div class="kpiValueRow">
-        <span class="kpiValue">1,24</span>
+        <span class="kpiValue">{{ totalHours() }}</span>
         <span class="trend neutral">
           <span class="material-symbols-rounded">check_circle</span>
-          On Track
+          Logged
         </span>
       </div>
       <div class="progressBarContainer mini">
-        <div class="progressBar" style="width: 45%"></div>
+        <div class="progressBar" [style.width.%]="(totalHours() / 40 * 100)"></div>
       </div>
     </div>
 
@@ -75,15 +75,15 @@
         <div class="blob blob2"></div>
       </div>
       <div class="cardIcon opacityIcon">
-        <span class="material-symbols-rounded">verified</span>
+        <span class="material-symbols-rounded">trending_up</span>
       </div>
-      <p class="kpiLabel">Approvals</p>
+      <p class="kpiLabel">{{ currentUser?.accountType === 'ORGANIZATION' ? 'Team Consistency' : 'Work Consistency' }}</p>
       <div class="kpiValueRow">
-        <span class="kpiValue">08</span>
-        <span class="statusText">Pending Action</span>
+        <span class="kpiValue">{{ consistencyScore() }}%</span>
+        <span class="statusText">{{ consistencyScore() > 80 ? 'High Performance' : 'Improving' }}</span>
       </div>
       <div class="progressBarContainer mini">
-        <div class="progressBar tertiary" style="width: 20%"></div>
+        <div class="progressBar tertiary" [style.width.%]="consistencyScore()"></div>
       </div>
     </div>
   </div>
@@ -106,15 +106,12 @@
           </div>
         </div>
       </div>
-      <div class="cardIllustration">
-        <!-- Reverting to static illustration temporarily to fix build -->
-        <div class="barChart">
-          <div class="bar" style="height: 40%"></div>
-          <div class="bar" style="height: 70%"></div>
-          <div class="bar" style="height: 50%"></div>
-          <div class="bar" style="height: 90%"></div>
-          <div class="bar" style="height: 60%"></div>
-        </div>
+      <div class="chartContent">
+        <canvas baseChart
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          [type]="'line'">
+        </canvas>
       </div>
       <div class="chartXAxis">
         <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
@@ -125,15 +122,15 @@
       <div class="integratedStats glossyDashboard">
         <div class="iStat">
           <span class="iLabel">Active</span>
-          <span class="iValue">{{ activeCount }}</span>
+          <span class="iValue">{{ activeCount() }}</span>
         </div>
         <div class="iStat">
           <span class="iLabel">Pending</span>
-          <span class="iValue danger">{{ pendingCount }}</span>
+          <span class="iValue danger">{{ pendingCount() }}</span>
         </div>
         <div class="iStat">
           <span class="iLabel">Completed</span>
-          <span class="iValue success">{{ completedCount }}</span>
+          <span class="iValue success">{{ completedCount() }}</span>
         </div>
       </div>
 
@@ -260,8 +257,8 @@
           <span class="material-symbols-rounded">refresh</span>
         </button>
       </div>
-      <div class="timeline" *ngIf="!isLoading">
-        <div class="timelineItem" *ngFor="let activity of recentActivities">
+      <div class="timeline" *ngIf="!isLoading()">
+        <div class="timelineItem" *ngFor="let activity of recentActivities()">
           <div class="timelineDot" [class.primary]="activity.type === 'primary'" [class.secondary]="activity.type === 'secondary'" [class.tertiary]="activity.type === 'tertiary'"></div>
           <div class="activityCard mini">
             <div class="activityHeader">
@@ -271,14 +268,14 @@
             <p class="activityDesc">{{ activity.activityDesc }}</p>
           </div>
         </div>
-        
-        <div class="emptyState" *ngIf="recentActivities.length === 0">
+
+        <div class="emptyState" *ngIf="recentActivities().length === 0">
           <span class="material-symbols-rounded">history</span>
           <p>No recent activity recorded.</p>
         </div>
       </div>
-      
-      <div class="loadingContainer" *ngIf="isLoading">
+
+      <div class="loadingContainer" *ngIf="isLoading()">
         <div class="skeleton activitySkeleton" *ngFor="let i of [1,2,3]"></div>
       </div>
     </div>

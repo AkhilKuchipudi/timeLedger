@@ -13,6 +13,8 @@ import { Router } from '@angular/router';
 export class Login implements OnInit {
   credentials = { username: '', password: '', accountType: 'INDIVIDUAL' };
   error = '';
+  showPassword = false;
+  keepMeLoggedIn = false;
 
   constructor(
     private seoService: SeoService,

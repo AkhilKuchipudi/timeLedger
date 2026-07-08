@@ -1,5 +1,8 @@
 package com.timeledger.backend.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,12 +20,16 @@ public class Task {
     @Id
     private String id;
 
+    @NotBlank(message = "Title is required")
+    @Size(min = 3, max = 100)
     @Field("title")
     private String title;
 
+    @Size(max = 500)
     @Field("description")
     private String description;
 
+    @NotNull
     private TaskStatus status;
 
     private TaskPriority priority;
