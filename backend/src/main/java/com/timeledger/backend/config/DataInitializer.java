@@ -58,7 +58,7 @@ public class DataInitializer {
             }
 
             // Initialize Leave Balances for the base user
-            if (leaveRepository.findByUserId(user.getId()).isEmpty()) {
+            if (leaveRepository.findByUser_Id(user.getId()).isEmpty()) {
                 LeaveBalance lb1 = new LeaveBalance();
                 lb1.setUser(user);
                 lb1.setType("Casual");

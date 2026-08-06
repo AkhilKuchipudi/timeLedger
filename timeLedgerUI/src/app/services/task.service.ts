@@ -44,4 +44,9 @@ export class TaskService {
     const url = userId ? `${this.apiUrl}/stats?userId=${userId}` : `${this.apiUrl}/stats`;
     return this.http.get<any>(url);
   }
+
+  getProductivityStats(userId?: number): Observable<number[]> {
+    const url = userId ? `${this.apiUrl}/productivity?userId=${userId}` : `${this.apiUrl}/productivity`;
+    return this.http.get<number[]>(url);
+  }
 }

@@ -4,6 +4,8 @@ import com.timeledger.backend.model.Task;
 import com.timeledger.backend.model.TaskPriority;
 import com.timeledger.backend.model.TaskStatus;
 import com.timeledger.backend.model.User;
+import com.timeledger.backend.model.SystemLog;
+import com.timeledger.backend.repository.SystemLogRepository;
 import com.timeledger.backend.repository.TaskRepository;
 import com.timeledger.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class DataSeeder implements CommandLineRunner {
 
     @Autowired
     private TaskRepository taskRepository;
+    
+    @Autowired
+    private SystemLogRepository systemLogRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -70,6 +75,17 @@ public class DataSeeder implements CommandLineRunner {
                 task2.onCreate();
 
                 taskRepository.saveAll(Arrays.asList(task1, task2));
+            }
+
+            // 4. Seed System Logs
+            if (systemLogRepository.count() == 0) {
+                SystemLog log1 = new SystemLog("system", "System Initialization", "INFO", "Database seeded with initial test data");
+                SystemLog log2 = new SystemLog("employer", "Account Created", "INFO", "Employer root account generated successfully");
+                SystemLog log3 = new SystemLog("employee", "Account Created", "INFO", "Employee test account generated successfully");
+                SystemLog log4 = new SystemLog("system", "Warning Simulation", "WARNING", "Mock warning event generated for UI testing");
+                SystemLog log5 = new SystemLog("system", "Error Simulation", "ERROR", "Mock error event generated for UI testing");
+                
+                systemLogRepository.saveAll(Arrays.asList(log1, log2, log3, log4, log5));
             }
 
             System.out.println("Data Seeding Completed: Employer (employer/password123) and Employee (employee/password123) created.");

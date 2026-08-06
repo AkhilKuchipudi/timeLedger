@@ -3,6 +3,7 @@ import { SeoService } from '../../services/seo.service';
 import { TaskService, Task } from '../../services/task.service';
 import { TimeEntryService, TimeEntry } from '../../services/time-entry.service';
 import { AuthService } from '../../services/auth.service';
+import { ManagerService } from '../../services/manager.service';
 import { ChartConfiguration, ChartData } from 'chart.js';
 
 @Component({
@@ -17,8 +18,13 @@ export class Dashboard implements OnInit {
   completedCount = signal(0);
   totalHours = signal(0);
   consistencyScore = signal(0);
+  pendingApprovalsCount = signal(0);
+
+  allocationStats = signal<any>({ LOW: 0, MEDIUM: 0, HIGH: 0 });
+  allocationPercentages = signal<any>({ LOW: 0, MEDIUM: 0, HIGH: 0 });
 
   tasks = signal<Task[]>([]);
+  projects = signal<any[]>([]);
   recentActivities = signal<any[]>([]);
   isLoading = signal(true);
   currentUser: any;
@@ -73,7 +79,8 @@ export class Dashboard implements OnInit {
     private seoService: SeoService,
     private taskService: TaskService,
     private timeEntryService: TimeEntryService,
-    private authService: AuthService
+    private authService: AuthService,
+    private managerService: ManagerService
   ) {}
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
@@ -94,7 +101,17 @@ export class Dashboard implements OnInit {
           this.pendingCount.set(stats.TODO || 0);
           this.completedCount.set(stats.DONE || 0);
 
-          this.lineChartData.datasets[0].data = [2, 5, 3, 8, 4, 6, this.completedCount()];
+          if (stats.priorities) {
+            this.allocationStats.set(stats.priorities);
+            this.updateAllocationChart(stats.priorities);
+          }
+        }
+      });
+
+      // Load Productivity Stats
+      this.taskService.getProductivityStats(user.id).subscribe({
+        next: (data: number[]) => {
+          this.lineChartData.datasets[0].data = data;
         }
       });
 
@@ -116,6 +133,14 @@ export class Dashboard implements OnInit {
           const totalMins = entries.reduce((acc, curr) => acc + (curr.durationMinutes || 0), 0);
           this.totalHours.set(Math.round(totalMins / 60));
 
+          // Extract unique projects
+          const uniqueProjects = [...new Set(entries.map(e => e.project))];
+          this.projects.set(uniqueProjects.map(p => ({
+            name: p,
+            status: 'Active',
+            percentage: Math.floor(Math.random() * 40) + 60 // Placeholder percentage
+          })));
+
           const activities = entries.slice(0, 5).map((e: TimeEntry) => ({
             actorName: user.fullName || user.username,
             timeAgo: this.getTimeAgo(new Date(e.startTime)),
@@ -132,6 +157,15 @@ export class Dashboard implements OnInit {
           this.consistencyScore.set(Math.round(score));
         }
       });
+
+      // Load Pending Approvals for PM/Admin
+      if (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_PM') {
+        this.managerService.getPendingRequests().subscribe({
+          next: (data) => {
+            this.pendingApprovalsCount.set(data.leaves.length + data.timesheets.length);
+          }
+        });
+      }
     } else {
       this.isLoading.set(false);
     }
@@ -150,5 +184,33 @@ export class Dashboard implements OnInit {
     interval = seconds / 60;
     if (interval > 1) return Math.floor(interval) + "m ago";
     return Math.floor(seconds) + "s ago";
+  }
+
+  updateAllocationChart(priorities: any) {
+    const total = (priorities.LOW || 0) + (priorities.MEDIUM || 0) + (priorities.HIGH || 0) || 1;
+    const lowP = Math.round(((priorities.LOW || 0) / total) * 100);
+    const medP = Math.round(((priorities.MEDIUM || 0) / total) * 100);
+    const highP = 100 - lowP - medP;
+    
+    this.allocationPercentages.set({ LOW: lowP, MEDIUM: medP, HIGH: highP });
+  }
+
+  getDashArray(type: 'HIGH' | 'MEDIUM' | 'LOW'): string {
+    const p = this.allocationPercentages()[type] || 0;
+    const length = (p / 100) * 502;
+    return `${length} 502`;
+  }
+
+  getDashOffset(type: 'HIGH' | 'MEDIUM' | 'LOW'): string {
+    let offset = 0;
+    const p = this.allocationPercentages();
+    if (type === 'HIGH') {
+      offset = 0;
+    } else if (type === 'MEDIUM') {
+      offset = -((p.HIGH || 0) / 100) * 502;
+    } else if (type === 'LOW') {
+      offset = -(((p.HIGH || 0) + (p.MEDIUM || 0)) / 100) * 502;
+    }
+    return `${offset}`;
   }
 }

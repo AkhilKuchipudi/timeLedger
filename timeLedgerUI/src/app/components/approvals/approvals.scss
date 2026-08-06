@@ -1,0 +1,41 @@
+.approvalsContainer {
+  padding: 2rem;
+  margin: 0 auto;
+}
+
+.section {
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.emptyRow {
+  text-align: center;
+  padding: 3rem !important;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.iconActionBtn {
+  &.success {
+    color: var(--success);
+    &:hover { background: rgba(var(--success-rgb), 0.1); }
+  }
+  &.danger {
+    color: var(--danger);
+    &:hover { background: rgba(var(--danger-rgb), 0.1); }
+  }
+}
+
+.statusBadge.info {
+  background: rgba(99, 102, 241, 0.1);
+  color: #818cf8;
+}

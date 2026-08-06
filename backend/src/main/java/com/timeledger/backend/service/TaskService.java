@@ -30,6 +30,23 @@ public class TaskService {
         return taskRepository.countByStatus(status);
     }
 
+    public long countByAssigneeAndPriority(Long userId, com.timeledger.backend.model.TaskPriority priority) {
+        return taskRepository.countByAssigneeIdAndPriority(userId, priority);
+    }
+
+    public long countByPriority(com.timeledger.backend.model.TaskPriority priority) {
+        return taskRepository.countByPriority(priority);
+    }
+
+    public List<Task> getRecentlyCompletedTasks(Long userId, int days) {
+        java.time.LocalDateTime date = java.time.LocalDateTime.now().minusDays(days);
+        if (userId != null) {
+            return taskRepository.findByAssigneeIdAndStatusAndUpdatedAtAfter(userId, TaskStatus.COMPLETED, date);
+        } else {
+            return taskRepository.findByStatusAndUpdatedAtAfter(TaskStatus.COMPLETED, date);
+        }
+    }
+
     public Optional<Task> getTaskById(String id) {
         return taskRepository.findById(id);
     }

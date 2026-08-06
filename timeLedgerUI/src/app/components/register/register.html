@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="submitBtn" [disabled]="isLoading">
+            <button type="submit" class="primaryButton" style="padding: 1rem; border-radius: 14px; font-size: 1.05rem;" [disabled]="isLoading">
                 <span>{{ isLoading ? 'Creating Account...' : 'Get Started' }}</span>
                 <span class="material-symbols-rounded" *ngIf="!isLoading">rocket_launch</span>
                 <div class="spinner" *ngIf="isLoading"></div>

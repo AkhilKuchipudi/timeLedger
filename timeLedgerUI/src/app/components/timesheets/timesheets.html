@@ -98,8 +98,9 @@
             </span>
           </div>
           <p class="statusText">
-            {{ !isPresent ? 'Please mark your attendance.' : (isPunchedOut ? 'You have completed your day.' : 'You are
-            currently punched in.') }}
+            <span *ngIf="!isPresent">Please mark your attendance.</span>
+            <span *ngIf="isPresent && !isPunchedOut">You are currently punched in.</span>
+            <span *ngIf="isPresent && isPunchedOut">You have completed your day.</span>
           </p>
           <div class="timeLogs">
             <p class="timeLog" *ngIf="isPresent">In: {{ punchInTime }}</p>
@@ -198,8 +199,10 @@
             <p class="headerSubtitle">Report your daily progress</p>
           </div>
           <div class="headerActions">
-            <button class="secondaryButton small">Clear</button>
-            <button class="primaryButton small">Save Log</button>
+            <button class="secondaryButton small" (click)="loadDailyReport()">Reset</button>
+            <button class="primaryButton small" (click)="saveDailyReport()" [disabled]="isReportSaving">
+              {{ isReportSaving ? 'Saving...' : 'Save Log' }}
+            </button>
           </div>
         </div>
         <div class="cardBody">
@@ -207,7 +210,7 @@
             <div class="formGroup fullWidth">
               <label class="formLabel">CURRENT PROJECT</label>
               <div class="selectWrapper">
-                <select class="formSelect">
+                <select class="formSelect" [(ngModel)]="currentProject">
                   <option value="" disabled selected>Select a project...</option>
                   <option *ngFor="let proj of projects" [value]="proj">{{ proj }}</option>
                 </select>
@@ -218,7 +221,7 @@
             <div class="formGroup">
               <label class="formLabel">WORK LOCATION</label>
               <div class="selectWrapper">
-                <select class="formSelect">
+                <select class="formSelect" [(ngModel)]="workLocation">
                   <option value="office">Office (HQ)</option>
                   <option value="remote">Remote</option>
                   <option value="hybrid">Hybrid</option>
@@ -230,7 +233,7 @@
             <div class="formGroup">
               <label class="formLabel">SHIFT TYPE</label>
               <div class="selectWrapper">
-                <select class="formSelect">
+                <select class="formSelect" [(ngModel)]="shiftType">
                   <option value="morning">Morning Shift</option>
                   <option value="evening">Evening Shift</option>
                   <option value="night">Night Shift</option>
@@ -241,31 +244,33 @@
 
             <div class="formGroup fullWidth">
               <label class="formLabel">YESTERDAY'S WORK</label>
-              <textarea class="formTextarea" rows="3" placeholder="What did you complete yesterday?"></textarea>
+              <textarea class="formTextarea" rows="3" placeholder="What did you complete yesterday?" [(ngModel)]="yesterdayWork"></textarea>
             </div>
 
             <div class="formGroup fullWidth">
               <label class="formLabel">TODAY'S PLAN</label>
-              <textarea class="formTextarea" rows="4" placeholder="What are your goals for today?"></textarea>
+              <textarea class="formTextarea" rows="4" placeholder="What are your goals for today?" [(ngModel)]="todayPlan"></textarea>
             </div>
 
             <div class="formGroup fullWidth">
               <label class="formLabel">BLOCKERS / IMPEDIMENTS</label>
-              <textarea class="formTextarea" rows="2" placeholder="Any blockers? (Optional)"></textarea>
+              <textarea class="formTextarea" rows="2" placeholder="Any blockers? (Optional)" [(ngModel)]="blockers"></textarea>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- REDESIGNED Work History (Moved to side) -->
+      <!-- REDESIGNED Work History -->
       <div class="glassPanel tableCard">
         <div class="cardBlobs">
           <div class="blob blob1"></div>
           <div class="blob blob2 secondaryBlob"></div>
         </div>
-        <div class="cardHeader historyHeader">
-          <div class="headerTitleWrapper">
-            <div class="headerIconBox">
+
+        <!-- Table Header -->
+        <div class="tableCardHeader">
+          <div class="tableHeaderLeft">
+            <div class="tableIconBox">
               <span class="material-symbols-rounded">history</span>
             </div>
             <div class="titleTextGroup">
@@ -273,64 +278,100 @@
               <p class="headerSubtitle">Previous activity logs</p>
             </div>
           </div>
-          <div class="headerBadge">
-            <span class="badgeValue">{{ historyLogs.length }} Entries</span>
+          <div class="tableHeaderRight">
+            <span class="entriesBadge">{{ historyLogs.length }} Entries</span>
           </div>
         </div>
+
+        <!-- Table Body -->
         <div class="tableResponsive">
-          <table class="historyTable redesignedTable">
+          <table class="historyTable">
             <thead>
               <tr>
                 <th>Date</th>
+                <th>Project</th>
                 <th>Status</th>
-                <th>In</th>
-                <th>Out</th>
-                <th class="actionCol">View</th>
+                <th>Punch In</th>
+                <th>Punch Out</th>
+                <th>Duration</th>
+                <th>Details</th>
               </tr>
             </thead>
             <tbody>
-              <ng-container *ngFor="let log of historyLogs">
-                <tr>
-                  <td class="boldText">{{ log.date }}</td>
+              <ng-container *ngFor="let log of pagedLogs">
+                <tr [class.activeRow]="log.showDetails">
                   <td>
-                    <span class="statusBadge" [ngClass]="log.status.toLowerCase()">{{ log.status }}</span>
+                    <span class="dateText">{{ log.date }}</span>
                   </td>
-                  <td class="timeText">{{ log.punchIn }}</td>
-                  <td class="timeText">{{ log.punchOut }}</td>
-                  <td class="actionCol">
-                    <button class="iconActionBtn" (click)="toggleDetails(log)" [class.activeAction]="log.showDetails">
-                      <span class="material-symbols-rounded">{{ log.showDetails ? 'visibility_off' : 'visibility'
-                        }}</span>
+                  <td>
+                    <span class="projectText">{{ log.project || '—' }}</span>
+                  </td>
+                  <td>
+                    <span class="statusPill" [ngClass]="log.status.toLowerCase()">
+                      <span class="statusDot"></span>
+                      {{ log.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="timeChip in">{{ log.punchIn }}</span>
+                  </td>
+                  <td>
+                    <span class="timeChip out" *ngIf="log.punchOut !== '-'">{{ log.punchOut }}</span>
+                    <span class="timeChip pending" *ngIf="log.punchOut === '-'">Active</span>
+                  </td>
+                  <td>
+                    <span class="durationBadge" *ngIf="log.punchOut !== '-'">{{ calculateDuration(log.punchIn, log.punchOut) }}</span>
+                    <span class="durationBadge" *ngIf="log.punchOut === '-'">—</span>
+                  </td>
+                  <td>
+                    <button class="detailToggleBtn" (click)="toggleDetails(log)" [class.active]="log.showDetails" title="View Details">
+                      <span class="material-symbols-rounded">{{ log.showDetails ? 'expand_less' : 'expand_more' }}</span>
                     </button>
                   </td>
                 </tr>
-                <!-- Detailed Row (Hidden by default) -->
+                <!-- Expanded detail row -->
                 <tr *ngIf="log.showDetails" class="detailRow">
-                  <td colspan="5">
+                  <td colspan="7">
                     <div class="detailContent">
-                      <div class="detailItem">
-                        <span class="detailLabel">Project Focus:</span>
-                        <span class="detailValue">{{ log.project }}</span>
+                      <div class="detailChip">
+                        <span class="material-symbols-rounded">work</span>
+                        <span>{{ log.project || 'No project assigned' }}</span>
                       </div>
-                      <div class="detailItem" *ngIf="log.punchIn !== '-'">
-                        <span class="detailLabel">Duration:</span>
-                        <span class="detailValue durationText">{{ calculateDuration(log.punchIn, log.punchOut) }}</span>
+                      <div class="detailChip" *ngIf="log.punchOut !== '-'">
+                        <span class="material-symbols-rounded">timer</span>
+                        <span>{{ calculateDuration(log.punchIn, log.punchOut) }} worked</span>
                       </div>
                     </div>
                   </td>
                 </tr>
               </ng-container>
+
+              <!-- Empty State -->
+              <tr *ngIf="historyLogs.length === 0">
+                <td colspan="7">
+                  <div class="emptyTableState">
+                    <span class="material-symbols-rounded">inbox</span>
+                    <p>No history logs found. Punch in to start tracking!</p>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
-        <!-- Compact Footer -->
-        <div class="tableFooter compactFooter">
-          <div class="paginationControls">
-            <button class="iconButton sm" disabled>
+
+        <!-- Pagination Footer -->
+        <div class="tablePaginationFooter">
+          <span class="showingText">
+            Showing <strong>{{ showingFrom }}–{{ showingTo }}</strong> of <strong>{{ historyLogs.length }}</strong> entries
+          </span>
+          <div class="paginationBtns">
+            <button class="pageBtn" (click)="prevPage()" [disabled]="currentPage === 1">
               <span class="material-symbols-rounded">chevron_left</span>
+              Previous
             </button>
-            <span class="pageIndicator">1 / 6</span>
-            <button class="iconButton sm">
+            <span class="pageIndicator">{{ currentPage }} / {{ totalPages }}</span>
+            <button class="pageBtn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+              Next
               <span class="material-symbols-rounded">chevron_right</span>
             </button>
           </div>

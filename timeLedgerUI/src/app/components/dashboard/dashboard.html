@@ -6,6 +6,26 @@
     </div>
   </header>
   <div class="kpiGrid">
+    <div class="glassPanel kpiCard" *ngIf="currentUser?.role === 'ROLE_ADMIN' || currentUser?.role === 'ROLE_PM'">
+      <div class="cardBlobs">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+      </div>
+      <div class="cardIcon opacityIcon">
+        <span class="material-symbols-rounded">rule</span>
+      </div>
+      <p class="kpiLabel">Pending Approvals</p>
+      <div class="kpiValueRow">
+        <span class="kpiValue">{{ pendingApprovalsCount() }}</span>
+        <span class="trend {{ pendingApprovalsCount() > 0 ? 'negative' : 'neutral' }}">
+          <span class="material-symbols-rounded">priority_high</span>
+          Needs Review
+        </span>
+      </div>
+      <div class="progressBarContainer mini">
+        <div class="progressBar tertiary" [style.width.%]="pendingApprovalsCount() > 0 ? 100 : 0"></div>
+      </div>
+    </div>
     <div class="glassPanel kpiCard">
       <div class="cardBlobs">
         <div class="blob blob1"></div>
@@ -113,9 +133,6 @@
           [type]="'line'">
         </canvas>
       </div>
-      <div class="chartXAxis">
-        <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
-      </div>
     </div>
 
     <div class="allocationColumn">
@@ -146,12 +163,18 @@
           <div class="ringChart">
             <svg class="ringSvg" viewBox="0 0 192 192">
               <circle class="ringBg" cx="96" cy="96" r="80"></circle>
-              <circle class="ringSegment primary" cx="96" cy="96" r="80" style="stroke-dashoffset: 150"></circle>
-              <circle class="ringSegment secondary" cx="96" cy="96" r="80" style="stroke-dashoffset: 350"></circle>
-              <circle class="ringSegment tertiary" cx="96" cy="96" r="80" style="stroke-dashoffset: 450"></circle>
+              <circle class="ringSegment primary" cx="96" cy="96" r="80" 
+                      [style.stroke-dasharray]="getDashArray('HIGH')" 
+                      [style.stroke-dashoffset]="getDashOffset('HIGH')"></circle>
+              <circle class="ringSegment secondary" cx="96" cy="96" r="80" 
+                      [style.stroke-dasharray]="getDashArray('MEDIUM')" 
+                      [style.stroke-dashoffset]="getDashOffset('MEDIUM')"></circle>
+              <circle class="ringSegment tertiary" cx="96" cy="96" r="80" 
+                      [style.stroke-dasharray]="getDashArray('LOW')" 
+                      [style.stroke-dashoffset]="getDashOffset('LOW')"></circle>
             </svg>
             <div class="ringContent">
-              <span class="ringValue">142</span>
+              <span class="ringValue">{{ activeCount() }}</span>
               <span class="ringLabel">Active</span>
             </div>
           </div>
@@ -161,23 +184,23 @@
           <div class="allocationLegendItem">
             <div class="labelGroup">
               <span class="dot primary"></span>
-              <span class="label">Core Development</span>
+              <span class="label">High Priority</span>
             </div>
-            <span class="value">45%</span>
+            <span class="value">{{ allocationPercentages().HIGH }}%</span>
           </div>
           <div class="allocationLegendItem">
             <div class="labelGroup">
               <span class="dot secondary"></span>
-              <span class="label">Marketing Ops</span>
+              <span class="label">Medium Priority</span>
             </div>
-            <span class="value">30%</span>
+            <span class="value">{{ allocationPercentages().MEDIUM }}%</span>
           </div>
           <div class="allocationLegendItem">
             <div class="labelGroup">
               <span class="dot tertiary"></span>
-              <span class="label">Research Labs</span>
+              <span class="label">Low Priority</span>
             </div>
-            <span class="value">25%</span>
+            <span class="value">{{ allocationPercentages().LOW }}%</span>
           </div>
         </div>
       </div>

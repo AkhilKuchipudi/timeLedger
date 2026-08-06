@@ -1,6 +1,4 @@
 .calendarContainer {
-    max-width: 1400px;
-
     @media (max-width: 1024px) {
         padding: 0 1rem 1rem;
     }
@@ -1093,4 +1091,397 @@
         background: var(--outline-variant);
         border-radius: 10px;
     }
+}
+
+/* ── Redesigned Work History Table ── */
+
+.tableCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--glass-border);
+    background: linear-gradient(to right, color-mix(in srgb, var(--tertiary), transparent 96%), transparent);
+}
+
+.tableHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.tableHeaderRight {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tableIconBox {
+    width: 3.25rem;
+    height: 3.25rem;
+    background: color-mix(in srgb, var(--tertiary), transparent 90%);
+    border-radius: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--tertiary);
+    border: 1px solid color-mix(in srgb, var(--tertiary), transparent 85%);
+    flex-shrink: 0;
+
+    span { font-size: 1.75rem; }
+}
+
+.titleTextGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.entriesBadge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Inter', sans-serif;
+    background: var(--surfaceContainerLow);
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--glass-border);
+    white-space: nowrap;
+}
+
+.historyTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+
+    th {
+        padding: 1rem 1.25rem;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--onSurfaceVariant);
+        background: color-mix(in srgb, var(--surfaceContainerLowest), transparent 40%);
+        border-bottom: 1px solid var(--glass-border);
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    td {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid color-mix(in srgb, var(--glass-border), transparent 40%);
+        vertical-align: middle;
+        font-size: 0.875rem;
+        transition: background 0.2s ease;
+    }
+
+    tr.activeRow > td {
+        background: color-mix(in srgb, var(--primary), transparent 97%);
+    }
+
+    tr:last-child > td {
+        border-bottom: none;
+    }
+
+    tr:not(.detailRow):hover > td {
+        background: color-mix(in srgb, var(--surfaceContainerLow), transparent 50%);
+    }
+}
+
+.dateText {
+    font-weight: 700;
+    color: var(--onSurface);
+    white-space: nowrap;
+}
+
+.projectText {
+    font-size: 0.8rem;
+    color: var(--onSurfaceVariant);
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+/* Status Pill */
+.statusPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+
+    .statusDot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        flex-shrink: 0;
+    }
+
+    &.present {
+        background: color-mix(in srgb, var(--primary), transparent 88%);
+        color: var(--primary);
+        border: 1px solid color-mix(in srgb, var(--primary), transparent 75%);
+    }
+
+    &.leave {
+        background: color-mix(in srgb, #ffab00, transparent 88%);
+        color: #ffab00;
+        border: 1px solid color-mix(in srgb, #ffab00, transparent 75%);
+    }
+
+    &.absent {
+        background: color-mix(in srgb, #ff4d4d, transparent 88%);
+        color: #ff4d4d;
+        border: 1px solid color-mix(in srgb, #ff4d4d, transparent 75%);
+    }
+}
+
+/* Time Chips */
+.timeChip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    border-radius: 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: 'Inter', monospace;
+    white-space: nowrap;
+
+    &.in {
+        background: color-mix(in srgb, var(--primary), transparent 92%);
+        color: var(--primary);
+        border: 1px solid color-mix(in srgb, var(--primary), transparent 80%);
+    }
+
+    &.out {
+        background: color-mix(in srgb, var(--tertiary), transparent 92%);
+        color: var(--tertiary);
+        border: 1px solid color-mix(in srgb, var(--tertiary), transparent 80%);
+    }
+
+    &.pending {
+        background: color-mix(in srgb, #00c853, transparent 92%);
+        color: #00c853;
+        border: 1px solid color-mix(in srgb, #00c853, transparent 80%);
+        animation: pulseBadge 2s infinite;
+    }
+}
+
+@keyframes pulseBadge {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.durationBadge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--onSurfaceVariant);
+    font-family: 'Inter', monospace;
+}
+
+.detailToggleBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    background: transparent;
+    color: var(--onSurfaceVariant);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: scale(1.1);
+    }
+
+    &.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--primary), transparent 60%);
+    }
+
+    span { font-size: 1.1rem; }
+}
+
+.detailRow > td {
+    padding: 0 !important;
+    border-bottom: 2px solid color-mix(in srgb, var(--primary), transparent 80%);
+}
+
+.detailContent {
+    padding: 1.25rem 2rem;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    background: color-mix(in srgb, var(--primary), transparent 97%);
+    animation: slideDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.detailChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: color-mix(in srgb, var(--surfaceContainerLow), transparent 30%);
+    border: 1px solid var(--glass-border);
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--onSurface);
+
+    span.material-symbols-rounded {
+        font-size: 1rem;
+        color: var(--primary);
+    }
+}
+
+.emptyTableState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 3rem;
+    color: var(--onSurfaceVariant);
+    opacity: 0.5;
+    text-align: center;
+
+    span { font-size: 3rem; }
+    p { font-size: 0.9rem; margin: 0; }
+}
+
+/* ── Pagination Footer ── */
+.tablePaginationFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    border-top: 1px solid var(--glass-border);
+    background: color-mix(in srgb, var(--surfaceContainerLowest), transparent 50%);
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 640px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+}
+
+.showingText {
+    font-size: 0.8rem;
+    color: var(--onSurfaceVariant);
+    opacity: 0.8;
+
+    strong {
+        color: var(--onSurface);
+        font-weight: 800;
+    }
+}
+
+.paginationBtns {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.pageIndicator {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--onSurface);
+    padding: 0.35rem 0.85rem;
+    background: color-mix(in srgb, var(--surfaceContainerLow), transparent 30%);
+    border-radius: 999px;
+    border: 1px solid var(--glass-border);
+    min-width: 50px;
+    text-align: center;
+}
+
+.pageBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--glass-border);
+    background: color-mix(in srgb, var(--surfaceContainerLow), transparent 40%);
+    color: var(--onSurface);
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+
+    span { font-size: 1.1rem; }
+
+    &:hover:not(:disabled) {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--primary), transparent 60%);
+        transform: translateY(-1px);
+    }
+
+    &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        transform: none;
+    }
+}
+
+/* Keep old leavePolicyNote & animation */
+.leavePolicyNote {
+    background: color-mix(in srgb, var(--secondary), transparent 96%);
+    border: 1px dashed color-mix(in srgb, var(--secondary), transparent 80%);
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+
+    .noteIcon {
+        font-size: 1.5rem;
+        color: var(--secondary);
+    }
+
+    p {
+        font-size: 0.8rem;
+        line-height: 1.5;
+        color: var(--onSurfaceVariant);
+        margin: 0;
+
+        strong {
+            color: var(--secondary);
+            font-weight: 800;
+        }
+    }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.fadeIn {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }

@@ -61,7 +61,7 @@
 
     <!-- Right Login Section -->
     <div class="loginSection">
-      <div class="loginCard">
+      <div class="glassPanel loginCard">
         <!-- Account Type Tab Toggle -->
         <div class="accountTypeToggle">
           <button type="button" [class.active]="credentials.accountType === 'INDIVIDUAL'" (click)="credentials.accountType = 'INDIVIDUAL'">
@@ -110,8 +110,9 @@
           </div>
 
           <!-- SIGN IN Button -->
-          <button type="submit" class="submitBtn">
+          <button type="submit" class="primaryButton" style="padding: 1.05rem; font-size: 1rem; margin-top: 0.5rem; border-radius: 12px;">
             <span>SIGN IN</span>
+            <span class="material-symbols-rounded">login</span>
           </button>
         </form>
 

@@ -64,4 +64,19 @@ public class UserService {
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
+
+    public User updateRole(Long id, String role) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setRole(role);
+        return userRepository.save(user);
+    }
+
+    public User updateProfile(Long id, String fullName, String email) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (fullName != null && !fullName.isBlank()) user.setFullName(fullName);
+        if (email != null && !email.isBlank()) user.setEmail(email);
+        return userRepository.save(user);
+    }
 }

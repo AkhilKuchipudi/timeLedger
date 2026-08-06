@@ -50,6 +50,26 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/{id}/role")
+    public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestBody java.util.Map<String, String> body) {
+        try {
+            User updated = userService.updateRole(id, body.get("role"));
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<?> updateUserProfile(@PathVariable Long id, @RequestBody java.util.Map<String, String> body) {
+        try {
+            User updated = userService.updateProfile(id, body.get("fullName"), body.get("email"));
+            return ResponseEntity.ok(updated);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     // Helper class for JWT response
     @Data
     @AllArgsConstructor

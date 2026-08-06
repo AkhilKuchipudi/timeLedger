@@ -17,9 +17,11 @@ import { FormsModule } from '@angular/forms';
 import { Timesheets } from './components/timesheets/timesheets';
 import { Teams } from './components/teams/teams';
 import { Settings } from './components/settings/settings';
+import { Approvals } from './components/approvals/approvals';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { AdminLogs } from './components/admin-logs/admin-logs';
 
 
 @NgModule({
@@ -35,7 +37,9 @@ import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2
     Timesheets,
     Teams,
     Settings,
+    Approvals,
     NotFound,
+    AdminLogs,
   ],
   imports: [
     BrowserModule,
