@@ -524,6 +524,24 @@
   }
 }
 
+.initialsAvatar {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary), transparent 55%);
+
+  .initialsText {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    user-select: none;
+  }
+}
+
 .userDetails {
   flex: 1;
   min-width: 0;

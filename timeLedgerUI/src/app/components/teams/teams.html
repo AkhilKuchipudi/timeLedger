@@ -1,4 +1,11 @@
 <div class="teamsContainer fadeIn">
+
+<!-- Toast -->
+<div class="toastNotification" *ngIf="toast" [class]="toast.type">
+  <span class="material-symbols-rounded">{{ toast.type === 'success' ? 'check_circle' : 'error' }}</span>
+  {{ toast.message }}
+</div>
+
     <header class="pageHeader">
         <div class="headerInfo">
             <h1 class="pageTitle">{{ currentUser?.accountType === 'ORGANIZATION' ? 'Organization Directory' : 'Team Directory' }}</h1>
@@ -45,7 +52,9 @@
                     <!-- If results found -->
                     <div class="searchResultList" *ngIf="searchQuery && filteredMembers.length > 0">
                         <div *ngFor="let member of filteredMembers" class="resultItem" (click)="toggleSearch()">
-                            <img [src]="member.avatar" class="miniAvatar">
+                            <div class="initialsAvatar" style="width: 32px; height: 32px; font-size: 0.9rem; border-radius: 8px;" [style.backgroundColor]="getInitialsColor(member.name)">
+                                {{ getMemberInitials(member.name) }}
+                            </div>
                             <div class="resultInfo">
                                 <span class="resultName">{{ member.name }}</span>
                                 <span class="resultSub">{{ member.email }} • {{ member.role }}</span>
@@ -72,7 +81,9 @@
             </div>
             <div class="cardHeader">
                 <div class="avatarSection">
-                    <img [src]="member.avatar" alt="Avatar" class="avatar">
+                    <div class="initialsAvatar" [style.backgroundColor]="getInitialsColor(member.name)">
+                        {{ getMemberInitials(member.name) }}
+                    </div>
                     <div class="statusDot" [class]="member.status.toLowerCase()"></div>
                 </div>
                 <button class="iconButton mini deleteBtn" (click)="deleteMember(member.id)">
@@ -91,11 +102,11 @@
             </div>
 
             <div class="memberActions">
-                <button class="secondaryButton small">
+                <button class="secondaryButton small" (click)="openEditModal(member)">
                     <span class="material-symbols-rounded">edit</span>
                     Edit
                 </button>
-                <button class="secondaryButton small">
+                <button class="secondaryButton small" (click)="openPermsModal(member)">
                     <span class="material-symbols-rounded">key</span>
                     Perms
                 </button>
@@ -140,7 +151,66 @@
             </div>
             <div class="modalFooter">
                 <button class="modalBtn cancel" (click)="showAddMemberModal = false">Cancel</button>
-                <button class="modalBtn confirm" (click)="addMember()">Send Invitation</button>
+                <button class="modalBtn confirm" (click)="addMember()" [disabled]="isSending">
+                  {{ isSending ? 'Sending...' : 'Send Invitation' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modalOverlay" *ngIf="showEditModal">
+        <div class="glassModal">
+            <div class="modalHeader">
+                <h3 class="modalTitle">Edit Member Profile</h3>
+                <button class="iconButton mini" (click)="showEditModal = false">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="modalBody">
+                <div class="inputGroup">
+                    <label>Full Name</label>
+                    <input type="text" [(ngModel)]="editForm.name" placeholder="Enter name">
+                </div>
+                <div class="inputGroup">
+                    <label>Email Address</label>
+                    <input type="email" [(ngModel)]="editForm.email" placeholder="email@example.com">
+                </div>
+            </div>
+            <div class="modalFooter">
+                <button class="modalBtn cancel" (click)="showEditModal = false">Cancel</button>
+                <button class="modalBtn confirm" (click)="saveEdit()" [disabled]="isSavingEdit">
+                  {{ isSavingEdit ? 'Saving...' : 'Save Changes' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permissions Modal -->
+    <div class="modalOverlay" *ngIf="showPermsModal">
+        <div class="glassModal">
+            <div class="modalHeader">
+                <h3 class="modalTitle">Manage Permissions</h3>
+                <button class="iconButton mini" (click)="showPermsModal = false">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            <div class="modalBody">
+                <div class="inputGroup">
+                    <label>Project Role</label>
+                    <select [(ngModel)]="permsRole">
+                        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+                    </select>
+                </div>
+                <div class="infoBox" style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 0.9rem; color: var(--onSurfaceVariant);">
+                    <p style="margin: 0;"><strong>Role Information:</strong> Changing a user's role will update their access permissions across the system immediately.</p>
+                </div>
+            </div>
+            <div class="modalFooter">
+                <button class="modalBtn cancel" (click)="showPermsModal = false">Cancel</button>
+                <button class="modalBtn confirm" (click)="savePerms()" [disabled]="isSavingPerms">
+                  {{ isSavingPerms ? 'Saving...' : 'Save Permissions' }}
+                </button>
             </div>
         </div>
     </div>

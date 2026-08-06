@@ -66,4 +66,12 @@ export class AuthService {
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
   }
+
+  updateUserRole(userId: number, role: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${userId}/role`, { role });
+  }
+
+  updateUserProfile(userId: number, fullName: string, email: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${userId}/profile`, { fullName, email });
+  }
 }

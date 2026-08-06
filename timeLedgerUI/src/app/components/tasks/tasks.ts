@@ -3,6 +3,7 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 import { SeoService } from '../../services/seo.service';
 import { TaskService, Task as BackendTask } from '../../services/task.service';
 import { AuthService, User } from '../../services/auth.service';
+import { TimeEntryService, TimeEntry } from '../../services/time-entry.service';
 
 
 interface Task {
@@ -30,7 +31,8 @@ export class Tasks implements OnInit {
   constructor(
     private seoService: SeoService,
     private taskService: TaskService,
-    private authService: AuthService
+    private authService: AuthService,
+    private timeEntryService: TimeEntryService
   ) { }
 
   ngOnInit() {
@@ -66,7 +68,7 @@ export class Tasks implements OnInit {
     columnId: 'todo'
   };
   isEditing = false;
-  
+
   // Stage Modal State
   showStageModal = false;
   modalStageTitle = '';
@@ -97,7 +99,7 @@ export class Tasks implements OnInit {
   openMenu(x: number, y: number, item: any, type: 'task' | 'column' | 'project') {
     const board = document.querySelector('.kanbanBoard') as HTMLElement;
     const boardRect = board.getBoundingClientRect();
-    
+
     // Calculate position relative to the scrollable board
     let posX = x - boardRect.left + board.scrollLeft;
     let posY = y - boardRect.top + board.scrollTop;
@@ -129,7 +131,7 @@ export class Tasks implements OnInit {
     this.menuPosition = { x: posX, y: posY };
     this.menuVisible = true;
     this.menuType = type;
-    
+
     if (type === 'task') {
       this.selectedTask = item;
       this.selectedColumn = this.kanbanColumns.find(c => c.tasks.some(t => t.id === item.id));
@@ -308,9 +310,31 @@ export class Tasks implements OnInit {
   stopTimer() {
     this.isTimerRunning = false;
     clearInterval(this.timerInterval);
-    this.logActivity(`Stopped timer for "${this.activeTimerTask?.title}" (${this.getFormattedTime()})`, 'stop', this.activeTimerTask?.id);
-    // Here we would save to PostgreSQL/Backend
-    console.log(`Stopped timer for ${this.activeTimerTask?.title}. Total time: ${this.getFormattedTime()}`);
+
+    const formattedTime = this.getFormattedTime();
+    this.logActivity(`Stopped timer for "${this.activeTimerTask?.title}" (${formattedTime})`, 'stop', this.activeTimerTask?.id);
+
+    // Save to Backend
+    if (this.currentUser && this.currentUser.id && this.activeTimerTask) {
+      const entry: TimeEntry = {
+        userId: this.currentUser.id,
+        taskId: this.activeTimerTask.id,
+        project: this.activeTimerTask.project || 'Unassigned',
+        description: `Work on task: ${this.activeTimerTask.title}`,
+        startTime: new Date(Date.now() - this.timerSeconds * 1000).toISOString(),
+        endTime: new Date().toISOString(),
+        durationMinutes: Math.ceil(this.timerSeconds / 60),
+        status: 'PENDING'
+      };
+
+      this.timeEntryService.createEntry(entry).subscribe({
+        next: () => console.log('Time entry saved'),
+        error: (err) => console.error('Error saving time entry', err)
+      });
+    }
+
+    this.timerSeconds = 0;
+    this.activeTimerTask = null;
   }
 
   resetTimer() {
@@ -445,7 +469,7 @@ export class Tasks implements OnInit {
     this.taskService.getTasks().subscribe(tasks => {
       // Clear existing tasks in columns
       this.kanbanColumns.forEach(col => col.tasks = []);
-      
+
       tasks.forEach(bt => {
         let priority = bt.priority?.toLowerCase() || 'medium';
         if (priority === 'urgent') priority = 'critical';
@@ -459,12 +483,12 @@ export class Tasks implements OnInit {
           assignee: bt.assignee ? { name: bt.assignee.fullName, avatar: bt.assignee.avatar || 'https://i.pravatar.cc/150?u=' + bt.assignee.username } : { name: 'Unassigned', avatar: '' },
           dueDate: bt.dueDate ? new Date(bt.dueDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }) : ''
         };
-        
+
         let columnId = bt.status?.toLowerCase() || 'todo';
         if (columnId === 'in_progress') columnId = 'inprogress';
         if (columnId === 'completed') columnId = 'done';
         if (columnId === 'on_hold') columnId = 'review';
-        
+
         const column = this.kanbanColumns.find(c => c.id === columnId) || this.kanbanColumns[0];
         column.tasks.push(task);
       });
@@ -522,17 +546,17 @@ export class Tasks implements OnInit {
     if (!this.searchQuery.trim()) return [];
     const query = this.searchQuery.toLowerCase();
     const results: Task[] = [];
-    
+
     this.kanbanColumns.forEach(column => {
       column.tasks.forEach(task => {
-        if (task.title.toLowerCase().includes(query) || 
+        if (task.title.toLowerCase().includes(query) ||
             task.description.toLowerCase().includes(query) ||
             task.project.toLowerCase().includes(query)) {
           results.push(task);
         }
       });
     });
-    
+
     return results;
   }
 

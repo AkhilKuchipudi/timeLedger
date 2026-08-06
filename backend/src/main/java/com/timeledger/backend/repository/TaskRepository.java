@@ -16,4 +16,12 @@ public interface TaskRepository extends MongoRepository<Task, String> {
     long countByAssigneeIdAndStatus(Long assigneeId, TaskStatus status);
     
     long countByStatus(TaskStatus status);
+
+    long countByAssigneeIdAndPriority(Long assigneeId, com.timeledger.backend.model.TaskPriority priority);
+    
+    long countByPriority(com.timeledger.backend.model.TaskPriority priority);
+
+    List<Task> findByStatusAndUpdatedAtAfter(TaskStatus status, java.time.LocalDateTime date);
+    
+    List<Task> findByAssigneeIdAndStatusAndUpdatedAtAfter(Long assigneeId, TaskStatus status, java.time.LocalDateTime date);
 }

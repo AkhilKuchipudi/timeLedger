@@ -1,0 +1,84 @@
+<div class="approvalsContainer fadeIn">
+  <header class="pageHeader">
+    <div class="headerInfo">
+      <h1 class="pageTitle">Management Approvals</h1>
+      <p class="pageSubtitle">Review and manage pending leave requests and timesheets from your team.</p>
+    </div>
+  </header>
+
+  <div class="tabsContainer">
+    <div class="tabContent">
+      <div class="section">
+        <h2 class="sectionTitle">Pending Leave Requests ({{ pendingLeaves.length }})</h2>
+        <div class="glassPanel tableCard">
+          <table class="historyTable redesignedTable">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Type</th>
+                <th>Dates</th>
+                <th>Reason</th>
+                <th class="actionCol">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let leave of pendingLeaves">
+                <td>{{ leave.user?.fullName || leave.user?.username }}</td>
+                <td><span class="statusBadge info">{{ leave.type }}</span></td>
+                <td>{{ leave.startDate }} to {{ leave.endDate }}</td>
+                <td>{{ leave.description }}</td>
+                <td class="actionCol">
+                  <button class="iconActionBtn success" (click)="approveLeave(leave.id)" title="Approve">
+                    <span class="material-symbols-rounded">check_circle</span>
+                  </button>
+                  <button class="iconActionBtn danger" (click)="rejectLeave(leave.id)" title="Reject">
+                    <span class="material-symbols-rounded">cancel</span>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="pendingLeaves.length === 0">
+                <td colspan="5" class="emptyRow">No pending leave requests.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="sectionTitle">Pending Timesheets ({{ pendingTimesheets.length }})</h2>
+        <div class="glassPanel tableCard">
+          <table class="historyTable redesignedTable">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Project</th>
+                <th>Duration</th>
+                <th>Date</th>
+                <th class="actionCol">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let entry of pendingTimesheets">
+                <td>{{ entry.user?.fullName || entry.user?.username }}</td>
+                <td>{{ entry.project }}</td>
+                <td>{{ entry.durationMinutes }} mins</td>
+                <td>{{ entry.startTime | date:'shortDate' }}</td>
+                <td class="actionCol">
+                  <button class="iconActionBtn success" (click)="approveTimesheet(entry.id)" title="Approve">
+                    <span class="material-symbols-rounded">check_circle</span>
+                  </button>
+                  <button class="iconActionBtn danger" (click)="rejectTimesheet(entry.id)" title="Reject">
+                    <span class="material-symbols-rounded">cancel</span>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="pendingTimesheets.length === 0">
+                <td colspan="5" class="emptyRow">No pending timesheets.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

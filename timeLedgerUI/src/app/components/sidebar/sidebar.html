@@ -61,6 +61,12 @@
         {{ currentUser?.accountType === 'ORGANIZATION' ? 'Invite & Manage Team' : 'Teams & Roles' }}
       </a>
 
+      <a class="navLink" *ngIf="currentUser?.role === 'ROLE_ADMIN' || currentUser?.role === 'ROLE_PM'"
+        routerLink="/approvals" routerLinkActive="active" (click)="handleLinkClick()" aria-label="Management Approvals">
+        <span class="material-symbols-rounded">rule</span>
+        Approvals
+      </a>
+
       <!-- Common links for Team and PM/Admin -->
       <a class="navLink" routerLink="/timesheets" routerLinkActive="active" (click)="handleLinkClick()"
         aria-label="View Timesheet">
@@ -133,9 +139,8 @@
     <div class="profileWrapper">
       <a class="userMiniProfile" [class.active]="isSignOutModalOpen" [routerLink]="isLoggedIn ? '/profile' : '/login'"
         (click)="goToProfile($event)">
-        <div class="miniAvatar">
-          <img alt="User Avatar"
-            [src]="isLoggedIn && currentUser?.avatar ? currentUser?.avatar : 'https://ui-avatars.com/api/?name=?&background=cbd5e1&color=64748b'" />
+        <div class="miniAvatar initialsAvatar">
+          <span class="initialsText">{{ userInitials || '?' }}</span>
           <div class="onlineStatus" *ngIf="isLoggedIn"></div>
         </div>
         <div class="userDetails">
@@ -143,7 +148,7 @@
           <p class="userTitle">{{ isLoggedIn ? (currentUser?.role || 'User') : 'Sign In' }}</p>
         </div>
 
-        <button class="logoutTrigger" (click)="openSignOutModal($event)" *ngIf="isLoggedIn" title="Sign Out"
+        <button class="logoutTrigger" (click)="openSignOutModal($event); $event.preventDefault()" *ngIf="isLoggedIn" title="Sign Out"
           type="button">
           <span class="material-symbols-rounded">logout</span>
         </button>

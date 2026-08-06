@@ -1,11 +1,12 @@
 package com.timeledger.backend.repository;
 
-import com.timeledger.backend.model.LeaveBalance;
+import com.timeledger.backend.model.SystemLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 @Repository
-public interface LeaveBalanceRepository extends JpaRepository<LeaveBalance, Long> {
-    List<LeaveBalance> findByUser_Id(Long userId);
+public interface SystemLogRepository extends JpaRepository<SystemLog, String> {
+    List<SystemLog> findAllByOrderByTimestampDesc();
 }

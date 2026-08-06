@@ -2,12 +2,10 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: radial-gradient(circle at 80% 20%, var(--landing-bg-start) 0%, var(--landing-bg-end) 100%);
     color: var(--onSurface);
     font-family: 'Inter', sans-serif;
     position: relative;
     overflow-x: hidden;
-    transition: background 0.4s ease, color 0.4s ease;
 
     &::before {
         content: '';
@@ -528,32 +526,7 @@
     line-height: 1.4;
 }
 
-.submitBtn {
-    margin-top: 0.5rem;
-    padding: 1.05rem;
-    background: var(--submit-btn-bg);
-    border: none;
-    border-radius: 12px;
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    box-shadow: var(--submit-btn-shadow);
-    letter-spacing: 0.05em;
 
-    &:hover {
-        transform: translateY(-1px);
-        filter: brightness(1.06);
-    }
-
-    &:active {
-        transform: translateY(0);
-    }
-}
 
 .authDivider {
     display: flex;

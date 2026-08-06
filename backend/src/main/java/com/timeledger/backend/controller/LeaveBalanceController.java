@@ -15,6 +15,6 @@ public class LeaveBalanceController {
 
     @GetMapping("/user/{userId}")
     public List<LeaveBalance> getLeavesForUser(@PathVariable Long userId) {
-        return repository.findByUserId(userId);
+        return repository.findByUser_Id(userId);
     }
 }

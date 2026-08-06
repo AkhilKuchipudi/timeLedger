@@ -1,0 +1,47 @@
+<div class="logsContainer">
+  <div class="glassPanel formCard">
+    <div class="cardHeader">
+      <div class="headerTitleGroup">
+        <h2 class="headerTitle">System Logs</h2>
+        <p class="headerSubtitle">Audit trail and system events</p>
+      </div>
+      <div class="headerActions">
+        <button class="iconBtn" title="Refresh Logs">
+          <span class="material-symbols-rounded">refresh</span>
+        </button>
+        <button class="iconBtn" title="Download Export">
+          <span class="material-symbols-rounded">download</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="cardBody" style="padding: 0; overflow-x: auto;">
+      <table class="redesignedTable logsTable">
+        <thead>
+          <tr>
+            <th>Event ID</th>
+            <th>Timestamp</th>
+            <th>Severity</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of logs()">
+            <td class="boldText" style="color: var(--primary);">{{ log.id }}</td>
+            <td>{{ log.timestamp | date:'MMM d, y, h:mm a' }}</td>
+            <td>
+              <span class="statusBadge" [ngClass]="log.severity.toLowerCase()">{{ log.severity }}</span>
+            </td>
+            <td>{{ log.user }}</td>
+            <td class="boldText">{{ log.action }}</td>
+            <td style="opacity: 0.7; font-size: 0.85rem; max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" [title]="log.details">
+              {{ log.details }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

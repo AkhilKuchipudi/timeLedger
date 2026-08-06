@@ -48,7 +48,8 @@ export class App implements OnInit {
         '/notifications',
         '/profile',
         '/admin/logs',
-        '/reports'
+        '/reports',
+        '/approvals'
       ];
 
       const isValid = validRoutes.some(r => {

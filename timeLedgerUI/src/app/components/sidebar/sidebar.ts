@@ -13,6 +13,11 @@ export class Sidebar implements OnInit {
   isLoggedIn = false;
   currentUser: User | null = null;
   unreadNotificationsCount = 0;
+
+  get userInitials(): string {
+    const name = this.currentUser?.fullName || this.currentUser?.username || '';
+    return name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+  }
   
   isMobileMenuOpen = false;
   isSignOutModalOpen = false;
