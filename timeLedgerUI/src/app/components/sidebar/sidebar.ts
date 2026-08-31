@@ -20,7 +20,6 @@ export class Sidebar implements OnInit {
   }
   
   isMobileMenuOpen = false;
-  isSignOutModalOpen = false;
   currentTheme: 'light' | 'dark' | 'system' = 'system';
   previousThemeOption: string = '';
 
@@ -51,30 +50,27 @@ export class Sidebar implements OnInit {
     });
   }
 
-  openSignOutModal(event?: Event) {
+  logout(event?: Event) {
     if (event) {
+      event.preventDefault();
       event.stopPropagation();
     }
-    this.isSignOutModalOpen = true;
+    this.authService.logout();
+    this.closeMobileMenu();
+    this.router.navigateByUrl('/login');
   }
 
-  goToProfile(event: Event) {
+  goToProfile(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     this.handleLinkClick();
     if (this.isLoggedIn) {
-      this.router.navigate(['/profile']);
+      this.router.navigateByUrl('/profile');
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigateByUrl('/login');
     }
-  }
-
-  closeSignOutModal() {
-    this.isSignOutModalOpen = false;
-  }
-
-  confirmSignOut() {
-    this.authService.logout();
-    this.closeSignOutModal();
-    this.router.navigate(['/login']);
   }
 
   setTheme(theme: 'light' | 'dark' | 'system') {
