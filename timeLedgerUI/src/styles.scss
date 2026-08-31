@@ -671,3 +671,21 @@ h6 {
         width: 120px;
     }
 }
+
+/* Global Select & Option Theme Styling */
+select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+
+    option {
+        background-color: #181724;
+        color: #ffffff;
+        padding: 0.85rem 1rem;
+    }
+}
+
+body.light-theme select option {
+    background-color: #ffffff;
+    color: #111118;
+}

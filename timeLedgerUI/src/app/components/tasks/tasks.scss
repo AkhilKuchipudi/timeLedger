@@ -903,35 +903,55 @@
 /* Modal Styles */
 .modalOverlay {
     position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.7);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 6000;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    animation: fadeIn 0.3s ease;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    animation: fadeIn 0.25s ease;
 }
 
 .modalContainer {
     width: 100%;
     max-width: 550px;
-    background: rgba(20, 20, 30, 0.95) !important;
-    padding: 2.5rem;
+    max-height: calc(100vh - 3rem);
+    margin: auto;
+    background: #14141e !important;
+    padding: 2.25rem 2.5rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
     box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8) !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
+    box-sizing: border-box;
+    position: relative;
+    animation: modalPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 
     &.small {
         max-width: 400px;
     }
+
+    :host-context(body.light-theme) & {
+        background: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+    }
 }
 
 .modalHeader {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -945,9 +965,24 @@
 }
 
 .modalBody {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    padding-right: 0.25rem;
+    margin-right: -0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+    }
 }
 
 .inputGroup {
@@ -988,6 +1023,18 @@
             color: var(--onSurfaceVariant);
             opacity: 0.4;
         }
+
+        :host-context(body.light-theme) & {
+            background: rgba(0, 0, 0, 0.03);
+            border-color: rgba(0, 0, 0, 0.12);
+            color: #111118;
+
+            &:focus {
+                background: #ffffff;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+            }
+        }
     }
 
     textarea {
@@ -997,15 +1044,25 @@
     select {
         cursor: pointer;
         appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white'%3E%3Cpath d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E");
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='%23ffffff'%3E%3Cpath d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 1rem center;
         padding-right: 3rem;
 
         option {
-            background: #1a1a25;
-            color: white;
-            padding: 1rem;
+            background-color: #1a1a25;
+            color: #ffffff;
+            padding: 0.85rem 1rem;
+        }
+
+        :host-context(body.light-theme) & {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='%23111118'%3E%3Cpath d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E");
+
+            option {
+                background-color: #ffffff;
+                color: #111118;
+            }
         }
     }
 }
