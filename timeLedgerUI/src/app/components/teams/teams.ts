@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { TeamService, Team, Member as BackendMember } from '../../services/team.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -43,12 +43,39 @@ export class Teams implements OnInit {
   permsRole = '';
   isSavingPerms = false;
 
+  // Custom Dropdowns
+  isAddRoleDropdownOpen = false;
+  isAddTeamDropdownOpen = false;
+  isPermsRoleDropdownOpen = false;
+
   // Toast
   toast: { message: string; type: 'success' | 'error' } | null = null;
 
   showToast(message: string, type: 'success' | 'error') {
     this.toast = { message, type };
     setTimeout(() => (this.toast = null), 3500);
+  }
+
+  selectAddRole(role: string) {
+    this.newMember.role = role;
+    this.isAddRoleDropdownOpen = false;
+  }
+
+  selectAddTeam(team: string) {
+    this.newMember.team = team;
+    this.isAddTeamDropdownOpen = false;
+  }
+
+  selectPermsRole(role: string) {
+    this.permsRole = role;
+    this.isPermsRoleDropdownOpen = false;
+  }
+
+  @HostListener('document:click')
+  closeAllDropdowns() {
+    this.isAddRoleDropdownOpen = false;
+    this.isAddTeamDropdownOpen = false;
+    this.isPermsRoleDropdownOpen = false;
   }
 
   @ViewChild('searchInput') searchInput!: ElementRef;

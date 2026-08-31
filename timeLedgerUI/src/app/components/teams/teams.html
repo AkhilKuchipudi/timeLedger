@@ -1,11 +1,139 @@
-<div class="teamsContainer fadeIn">
-
 <!-- Toast -->
 <div class="toastNotification" *ngIf="toast" [class]="toast.type">
   <span class="material-symbols-rounded">{{ toast.type === 'success' ? 'check_circle' : 'error' }}</span>
   {{ toast.message }}
 </div>
 
+<!-- Add Member Modal -->
+<div class="modalOverlay" *ngIf="showAddMemberModal" (click)="showAddMemberModal = false">
+    <div class="modalContainer glassPanel" (click)="$event.stopPropagation()">
+        <div class="modalHeader">
+            <h2 class="modalTitle">Invite New Member</h2>
+            <button class="iconButton mini" (click)="showAddMemberModal = false">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+        </div>
+        <div class="modalBody">
+            <div class="inputGroup">
+                <label>Full Name</label>
+                <input type="text" [(ngModel)]="newMember.name" placeholder="Enter name">
+            </div>
+            <div class="inputGroup">
+                <label>Email Address</label>
+                <input type="email" [(ngModel)]="newMember.email" placeholder="email@example.com">
+            </div>
+            <div class="inputGroup">
+                <label>Project Role</label>
+                <div class="customSelectWrapper" [class.open]="isAddRoleDropdownOpen">
+                    <button type="button" class="customSelectTrigger" (click)="isAddRoleDropdownOpen = !isAddRoleDropdownOpen; isAddTeamDropdownOpen = false; $event.stopPropagation()">
+                        <span class="selectedValue">{{ newMember.role || 'Select Role' }}</span>
+                        <span class="material-symbols-rounded chevronIcon">expand_more</span>
+                    </button>
+                    <div class="customDropdownMenu" *ngIf="isAddRoleDropdownOpen" (click)="$event.stopPropagation()">
+                        <div class="dropdownOption" *ngFor="let role of roles" [class.selected]="newMember.role === role" (click)="selectAddRole(role)">
+                            <span class="optionText">{{ role }}</span>
+                            <span class="material-symbols-rounded checkIcon" *ngIf="newMember.role === role">check</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="inputGroup">
+                <label>Assigned Team</label>
+                <div class="customSelectWrapper" [class.open]="isAddTeamDropdownOpen">
+                    <button type="button" class="customSelectTrigger" (click)="isAddTeamDropdownOpen = !isAddTeamDropdownOpen; isAddRoleDropdownOpen = false; $event.stopPropagation()">
+                        <span class="selectedValue">{{ newMember.team || 'Select Team' }}</span>
+                        <span class="material-symbols-rounded chevronIcon">expand_more</span>
+                    </button>
+                    <div class="customDropdownMenu" *ngIf="isAddTeamDropdownOpen" (click)="$event.stopPropagation()">
+                        <div class="dropdownOption" *ngFor="let team of teams" [class.selected]="newMember.team === team" (click)="selectAddTeam(team)">
+                            <span class="optionText">{{ team }}</span>
+                            <span class="material-symbols-rounded checkIcon" *ngIf="newMember.team === team">check</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="inputGroup" *ngIf="currentUser?.accountType === 'ORGANIZATION'">
+                <label>Bulk Invite (Comma separated emails)</label>
+                <textarea [(ngModel)]="newMember.bulkEmails" placeholder="email1@example.com, email2@example.com" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="modalFooter">
+            <button class="secondaryButton" (click)="showAddMemberModal = false">Cancel</button>
+            <button class="primaryButton" (click)="addMember()" [disabled]="isSending">
+                {{ isSending ? 'Sending...' : 'Send Invitation' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modalOverlay" *ngIf="showEditModal" (click)="showEditModal = false">
+    <div class="modalContainer glassPanel" (click)="$event.stopPropagation()">
+        <div class="modalHeader">
+            <h2 class="modalTitle">Edit Member Profile</h2>
+            <button class="iconButton mini" (click)="showEditModal = false">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+        </div>
+        <div class="modalBody">
+            <div class="inputGroup">
+                <label>Full Name</label>
+                <input type="text" [(ngModel)]="editForm.name" placeholder="Enter name">
+            </div>
+            <div class="inputGroup">
+                <label>Email Address</label>
+                <input type="email" [(ngModel)]="editForm.email" placeholder="email@example.com">
+            </div>
+        </div>
+        <div class="modalFooter">
+            <button class="secondaryButton" (click)="showEditModal = false">Cancel</button>
+            <button class="primaryButton" (click)="saveEdit()" [disabled]="isSavingEdit">
+                {{ isSavingEdit ? 'Saving...' : 'Save Changes' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Permissions Modal -->
+<div class="modalOverlay" *ngIf="showPermsModal" (click)="showPermsModal = false; isPermsRoleDropdownOpen = false">
+    <div class="modalContainer glassPanel" (click)="$event.stopPropagation()">
+        <div class="modalHeader">
+            <h2 class="modalTitle">Manage Permissions</h2>
+            <button class="iconButton mini" (click)="showPermsModal = false; isPermsRoleDropdownOpen = false">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+        </div>
+        <div class="modalBody">
+            <div class="inputGroup">
+                <label>Project Role</label>
+                <div class="customSelectWrapper" [class.open]="isPermsRoleDropdownOpen">
+                    <button type="button" class="customSelectTrigger" (click)="isPermsRoleDropdownOpen = !isPermsRoleDropdownOpen; $event.stopPropagation()">
+                        <span class="selectedValue">{{ permsRole || 'Select Role' }}</span>
+                        <span class="material-symbols-rounded chevronIcon">expand_more</span>
+                    </button>
+                    <div class="customDropdownMenu" *ngIf="isPermsRoleDropdownOpen" (click)="$event.stopPropagation()">
+                        <div class="dropdownOption" *ngFor="let role of roles" [class.selected]="permsRole === role" (click)="selectPermsRole(role)">
+                            <span class="optionText">{{ role }}</span>
+                            <span class="material-symbols-rounded checkIcon" *ngIf="permsRole === role">check</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="infoNotice">
+                <span class="material-symbols-rounded">info</span>
+                <p><strong>Role Information:</strong> Changing a user's role will update their access permissions across the system immediately.</p>
+            </div>
+        </div>
+        <div class="modalFooter">
+            <button class="secondaryButton" (click)="showPermsModal = false; isPermsRoleDropdownOpen = false">Cancel</button>
+            <button class="primaryButton" (click)="savePerms()" [disabled]="isSavingPerms">
+                {{ isSavingPerms ? 'Saving...' : 'Save Permissions' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="teamsContainer fadeIn">
     <header class="pageHeader">
         <div class="headerInfo">
             <h1 class="pageTitle">{{ currentUser?.accountType === 'ORGANIZATION' ? 'Organization Directory' : 'Team Directory' }}</h1>
@@ -114,106 +242,6 @@
         </div>
     </div>
 
-    <!-- Add Member Modal -->
-    <div class="modalOverlay" *ngIf="showAddMemberModal">
-        <div class="glassModal">
-            <div class="modalHeader">
-                <h3 class="modalTitle">Invite New Member</h3>
-                <button class="iconButton mini" (click)="showAddMemberModal = false">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
-            </div>
-            <div class="modalBody">
-                <div class="inputGroup">
-                    <label>Full Name</label>
-                    <input type="text" [(ngModel)]="newMember.name" placeholder="Enter name">
-                </div>
-                <div class="inputGroup">
-                    <label>Email Address</label>
-                    <input type="email" [(ngModel)]="newMember.email" placeholder="email@example.com">
-                </div>
-                <div class="inputGroup">
-                    <label>Project Role</label>
-                    <select [(ngModel)]="newMember.role">
-                        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-                    </select>
-                </div>
-                <div class="inputGroup">
-                    <label>Assigned Team</label>
-                    <select [(ngModel)]="newMember.team">
-                        <option *ngFor="let team of teams" [value]="team">{{ team }}</option>
-                    </select>
-                </div>
-                <div class="inputGroup" *ngIf="currentUser?.accountType === 'ORGANIZATION'">
-                    <label>Bulk Invite (Comma separated emails)</label>
-                    <textarea [(ngModel)]="newMember.bulkEmails" placeholder="email1@example.com, email2@example.com" rows="3"></textarea>
-                </div>
-            </div>
-            <div class="modalFooter">
-                <button class="modalBtn cancel" (click)="showAddMemberModal = false">Cancel</button>
-                <button class="modalBtn confirm" (click)="addMember()" [disabled]="isSending">
-                  {{ isSending ? 'Sending...' : 'Send Invitation' }}
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Profile Modal -->
-    <div class="modalOverlay" *ngIf="showEditModal">
-        <div class="glassModal">
-            <div class="modalHeader">
-                <h3 class="modalTitle">Edit Member Profile</h3>
-                <button class="iconButton mini" (click)="showEditModal = false">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
-            </div>
-            <div class="modalBody">
-                <div class="inputGroup">
-                    <label>Full Name</label>
-                    <input type="text" [(ngModel)]="editForm.name" placeholder="Enter name">
-                </div>
-                <div class="inputGroup">
-                    <label>Email Address</label>
-                    <input type="email" [(ngModel)]="editForm.email" placeholder="email@example.com">
-                </div>
-            </div>
-            <div class="modalFooter">
-                <button class="modalBtn cancel" (click)="showEditModal = false">Cancel</button>
-                <button class="modalBtn confirm" (click)="saveEdit()" [disabled]="isSavingEdit">
-                  {{ isSavingEdit ? 'Saving...' : 'Save Changes' }}
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Permissions Modal -->
-    <div class="modalOverlay" *ngIf="showPermsModal">
-        <div class="glassModal">
-            <div class="modalHeader">
-                <h3 class="modalTitle">Manage Permissions</h3>
-                <button class="iconButton mini" (click)="showPermsModal = false">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
-            </div>
-            <div class="modalBody">
-                <div class="inputGroup">
-                    <label>Project Role</label>
-                    <select [(ngModel)]="permsRole">
-                        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-                    </select>
-                </div>
-                <div class="infoBox" style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 0.9rem; color: var(--onSurfaceVariant);">
-                    <p style="margin: 0;"><strong>Role Information:</strong> Changing a user's role will update their access permissions across the system immediately.</p>
-                </div>
-            </div>
-            <div class="modalFooter">
-                <button class="modalBtn cancel" (click)="showPermsModal = false">Cancel</button>
-                <button class="modalBtn confirm" (click)="savePerms()" [disabled]="isSavingPerms">
-                  {{ isSavingPerms ? 'Saving...' : 'Save Permissions' }}
-                </button>
-            </div>
-        </div>
-    </div>
     <ng-template #emptySearch>
         <div class="emptySearchState glassPanel fadeIn">
             <span class="material-symbols-rounded">person_search</span>
